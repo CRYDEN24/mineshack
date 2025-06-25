@@ -22,13 +22,13 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(5, 50px); /* уменьшили размер */
-      grid-gap: 10px; /* чуть меньше */
+      grid-template-columns: repeat(5, 50px);
+      grid-gap: 10px;
       margin-top: 20px;
     }
     .cell {
-      width: 50px;   /* уменьшено */
-      height: 50px;  /* уменьшено */
+      width: 50px;
+      height: 50px;
       background: #1b334c;
       border-radius: 12px;
       box-shadow: 5px 5px 12px #0a1624, -5px -5px 12px #273a5c;
@@ -49,8 +49,8 @@
       transition: all 0.5s ease-out;
     }
     .cell.star .star-img {
-      width: 28px;  /* уменьшено пропорционально */
-      height: 28px; /* уменьшено пропорционально */
+      width: 28px;
+      height: 28px;
       transform: translate(-50%, -50%) scale(1.2);
       opacity: 1;
     }
@@ -75,17 +75,26 @@
       opacity: 0.6;
       background: linear-gradient(90deg, #444, #666);
     }
+    #info {
+      margin-top: 12px;
+      color: #aaa;
+      font-size: 14px;
+      min-height: 18px; /* чтобы высота не прыгала */
+    }
   </style>
 </head>
 <body>
   <h2>1Win Mini App</h2>
   <div class="grid" id="grid"></div>
   <button class="btn" id="btn" onclick="generateStars()">Получить сигнал</button>
+  <div id="info">Сигнал можно получить только раз в 30 секунд.</div>
 
   <script>
     const gridEl = document.getElementById('grid');
     const total = 25;
     const btn = document.getElementById('btn');
+    const info = document.getElementById('info');
+    let countdownInterval = null;
 
     function createGrid() {
       for (let i = 0; i < total; i++) {
@@ -102,11 +111,22 @@
     }
 
     function generateStars() {
-      // Блокируем кнопку на 30 секунд
+      // Блокируем кнопку и запускаем таймер
       btn.disabled = true;
-      setTimeout(() => {
-        btn.disabled = false;
-      }, 30000);
+      let timeLeft = 30;
+      info.textContent = `Следующий сигнал можно получить через ${timeLeft} секунд.`;
+
+      if (countdownInterval) clearInterval(countdownInterval);
+      countdownInterval = setInterval(() => {
+        timeLeft--;
+        if (timeLeft > 0) {
+          info.textContent = `Следующий сигнал можно получить через ${timeLeft} секунд.`;
+        } else {
+          clearInterval(countdownInterval);
+          info.textContent = 'Сигнал можно получить только раз в 30 секунд.';
+          btn.disabled = false;
+        }
+      }, 1000);
 
       const starCount = Math.floor(Math.random() * 5) + 3; // от 3 до 7
 
