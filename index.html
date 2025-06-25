@@ -15,10 +15,10 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      color: #fff;
     }
     h2 {
       margin-top: 20px;
-      color: #fff;
     }
     .grid {
       display: grid;
@@ -79,24 +79,73 @@
       margin-top: 12px;
       color: #aaa;
       font-size: 14px;
-      min-height: 18px; /* чтобы высота не прыгала */
+      min-height: 18px;
+    }
+    #login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+      width: 220px;
+    }
+    #login-form input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      font-size: 16px;
+      color: #000;
+    }
+    #error-msg {
+      color: #ff5555;
+      font-size: 14px;
+      min-height: 18px;
     }
   </style>
 </head>
 <body>
   <h2>1Win Mini App</h2>
-  <div class="grid" id="grid"></div>
-  <button class="btn" id="btn" onclick="generateStars()">Получить сигнал</button>
-  <div id="info">Сигнал можно получить только раз в 30 секунд.</div>
+
+  <form id="login-form">
+    <input type="number" id="accountId" placeholder="Введите ваш 1Win ID" required />
+    <button type="submit" class="btn">Войти</button>
+    <div id="error-msg"></div>
+  </form>
+
+  <div class="grid" id="grid" style="display:none;"></div>
+  <button class="btn" id="btn" onclick="generateStars()" style="display:none;">Получить сигнал</button>
+  <div id="info" style="display:none;">Сигнал можно получить только раз в 30 секунд.</div>
 
   <script>
+    // Список разрешённых 1Win ID — добавьте туда нужные
+    const allowedAccountIds = [111111, 222222, 333333];
+
+    const loginForm = document.getElementById('login-form');
+    const errorMsg = document.getElementById('error-msg');
     const gridEl = document.getElementById('grid');
-    const total = 25;
     const btn = document.getElementById('btn');
     const info = document.getElementById('info');
+
+    const total = 25;
     let countdownInterval = null;
 
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const enteredId = Number(document.getElementById('accountId').value.trim());
+
+      if (allowedAccountIds.includes(enteredId)) {
+        loginForm.style.display = 'none';
+        gridEl.style.display = 'grid';
+        btn.style.display = 'inline-block';
+        info.style.display = 'block';
+        errorMsg.textContent = '';
+        createGrid();
+      } else {
+        errorMsg.textContent = 'Доступ запрещён: неверный 1Win ID.';
+      }
+    });
+
     function createGrid() {
+      gridEl.innerHTML = '';
       for (let i = 0; i < total; i++) {
         const div = document.createElement('div');
         div.classList.add('cell');
@@ -111,7 +160,6 @@
     }
 
     function generateStars() {
-      // Блокируем кнопку и запускаем таймер
       btn.disabled = true;
       let timeLeft = 30;
       info.textContent = `Следующий сигнал можно получить через ${timeLeft} секунд.`;
@@ -128,7 +176,7 @@
         }
       }, 1000);
 
-      const starCount = Math.floor(Math.random() * 5) + 3; // от 3 до 7
+      const starCount = Math.floor(Math.random() * 5) + 3;
 
       const cells = document.querySelectorAll('.cell');
       cells.forEach(c => c.classList.remove('star'));
@@ -141,9 +189,6 @@
         setTimeout(() => c.classList.add('star'), order * 150);
       });
     }
-
-    createGrid();
   </script>
 </body>
 </html>
-
