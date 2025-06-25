@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>1Win Style Mini App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background-color: #0b0f1a;
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    h2 {
+      margin-top: 20px;
+      color: #fff;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 64px);
+      grid-gap: 12px;
+      margin-top: 20px;
+    }
+    .cell {
+      width: 64px;
+      height: 64px;
+      background: #1b334c;
+      border-radius: 12px;
+      box-shadow: 5px 5px 12px #0a1624, -5px -5px 12px #273a5c;
+      position: relative;
+      overflow: hidden;
+    }
+    .cell.star {
+      background: #1b334c;
+    }
+    .star-img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      transition: all 0.5s ease-out;
+    }
+    .cell.star .star-img {
+      width: 36px;
+      height: 36px;
+      transform: translate(-50%, -50%) scale(1.2);
+      opacity: 1;
+    }
+    .btn {
+      margin-top: 30px;
+      background: linear-gradient(90deg, #2672ff, #00c6ff);
+      padding: 14px 32px;
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .btn:hover {
+      background: linear-gradient(90deg, #1a5ec4, #009dcf);
+    }
+  </style>
+</head>
+<body>
+  <h2>1Win Mini App</h2>
+  <div class="grid" id="grid"></div>
+  <button class="btn" onclick="generateStars()">Получить сигнал</button>
+
+  <script>
+    const gridEl = document.getElementById('grid');
+    const total = 25;
+    const starCount = 7;
+
+    function createGrid() {
+      for (let i = 0; i < total; i++) {
+        const div = document.createElement('div');
+        div.classList.add('cell');
+        div.dataset.i = i;
+        const img = document.createElement('img');
+        img.src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Gold_Star.svg/120px-Gold_Star.svg.png';
+        img.alt = '★';
+        img.className = 'star-img';
+        div.appendChild(img);
+        gridEl.appendChild(div);
+      }
+    }
+
+    function generateStars() {
+      const cells = document.querySelectorAll('.cell');
+      cells.forEach(c => c.classList.remove('star'));
+      const idx = new Set();
+      while (idx.size < starCount) idx.add(Math.floor(Math.random() * total));
+      idx.forEach((i, order) => {
+        const c = cells[i];
+        setTimeout(() => c.classList.add('star'), order * 150);
+      });
+    }
+
+    createGrid();
+  </script>
+</body>
+</html>
