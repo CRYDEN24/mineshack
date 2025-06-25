@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>1Win Style Mini App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
     body {
@@ -22,13 +22,13 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(5, 64px);
-      grid-gap: 12px;
+      grid-template-columns: repeat(5, 50px); /* уменьшили размер */
+      grid-gap: 10px; /* чуть меньше */
       margin-top: 20px;
     }
     .cell {
-      width: 64px;
-      height: 64px;
+      width: 50px;   /* уменьшено */
+      height: 50px;  /* уменьшено */
       background: #1b334c;
       border-radius: 12px;
       box-shadow: 5px 5px 12px #0a1624, -5px -5px 12px #273a5c;
@@ -49,8 +49,8 @@
       transition: all 0.5s ease-out;
     }
     .cell.star .star-img {
-      width: 36px;
-      height: 36px;
+      width: 28px;  /* уменьшено пропорционально */
+      height: 28px; /* уменьшено пропорционально */
       transform: translate(-50%, -50%) scale(1.2);
       opacity: 1;
     }
@@ -67,20 +67,25 @@
       cursor: pointer;
       transition: background 0.3s ease;
     }
-    .btn:hover {
+    .btn:hover:not(:disabled) {
       background: linear-gradient(90deg, #1a5ec4, #009dcf);
+    }
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+      background: linear-gradient(90deg, #444, #666);
     }
   </style>
 </head>
 <body>
   <h2>1Win Mini App</h2>
   <div class="grid" id="grid"></div>
-  <button class="btn" onclick="generateStars()">Получить сигнал</button>
+  <button class="btn" id="btn" onclick="generateStars()">Получить сигнал</button>
 
   <script>
     const gridEl = document.getElementById('grid');
     const total = 25;
-    const starCount = 7;
+    const btn = document.getElementById('btn');
 
     function createGrid() {
       for (let i = 0; i < total; i++) {
@@ -97,10 +102,20 @@
     }
 
     function generateStars() {
+      // Блокируем кнопку на 30 секунд
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.disabled = false;
+      }, 30000);
+
+      const starCount = Math.floor(Math.random() * 5) + 3; // от 3 до 7
+
       const cells = document.querySelectorAll('.cell');
       cells.forEach(c => c.classList.remove('star'));
       const idx = new Set();
-      while (idx.size < starCount) idx.add(Math.floor(Math.random() * total));
+      while (idx.size < starCount) {
+        idx.add(Math.floor(Math.random() * total));
+      }
       idx.forEach((i, order) => {
         const c = cells[i];
         setTimeout(() => c.classList.add('star'), order * 150);
@@ -111,3 +126,4 @@
   </script>
 </body>
 </html>
+
