@@ -7,14 +7,87 @@
 <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
 <style>
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{overflow:hidden;font-family:sans-serif;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;position:relative;background:#0b0f1a;}
-  #tsparticles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+  body{
+    overflow:hidden;
+    font-family:sans-serif;
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+    position:relative;
+    background:#0b0f1a;
+  }
+  #tsparticles{
+    position:fixed;
+    top:0;left:0;
+    width:100%;
+    height:100%;
+    z-index:-1;
+  }
 
-  h2{margin-bottom:20px;font-size:1.8em;}
-  .grid{display:grid;grid-template-columns:repeat(5,60px);grid-gap:12px;}
-  .cell{width:60px;height:60px;background:linear-gradient(to bottom,#3bd4e6,#1f839d);border-radius:10px;box-shadow:inset 0 0 8px rgba(255,255,255,0.1),0 6px 12px rgba(0,0,0,0.4);position:relative; cursor:pointer;transition:transform .2s;}
-  .cell:hover{transform:scale(1.05);}
-  .cell.star{animation:pulseGlow .8s ease forwards;}
+  h2{
+    margin-bottom:20px;
+    font-size:1.8em;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(5,60px);
+    grid-gap:12px;
+  }
+  .cell{
+    width:60px;
+    height:60px;
+    border-radius:10px;
+    box-shadow:inset 0 0 8px rgba(255,255,255,0.1),0 6px 12px rgba(0,0,0,0.4);
+    position:relative;
+    cursor:pointer;
+    transition: transform .2s;
+  }
+  .cell:hover{
+    transform: scale(1.05);
+  }
+
+  /* Квадрат внутри ячейки */
+  .cell svg rect {
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    opacity: 1;
+    transform-origin: center;
+    transform: scale(1);
+    fill: rgba(255,255,255,0.05);
+  }
+
+  /* Когда звезда активна — квадрат исчезает и немного сжимается */
+  .cell.star svg rect {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+
+  /* Картинка звезды */
+  .star-img {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 30px;
+    height: 30px;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* При активной звезде — звезда проявляется и увеличивается */
+  .cell.star .star-img {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+
+  /* Анимация свечения звезды */
+  .cell.star {
+    animation: pulseGlow 0.8s ease forwards;
+  }
 
   @keyframes pulseGlow{
     0%{box-shadow:0 0 0 rgba(255,215,0,0.2);transform:scale(1);}
@@ -22,23 +95,80 @@
     100%{box-shadow:0 0 10px rgba(255,215,0,0.4);transform:scale(1.05);}
   }
 
-  .star-img{position:absolute;top:50%;left:50%;width:30px;height:30px;transform:translate(-50%,-50%) scale(0);opacity:0;transition:all .4s;}
-  .cell.star .star-img{transform:translate(-50%,-50%) scale(1);opacity:1;}
+  .btn{
+    margin-top:20px;
+    padding:14px 32px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(90deg,#2672ff,#00c6ff);
+    color:#fff;
+    font-weight:bold;
+    font-size:18px;
+    cursor:pointer;
+    transition:background .3s;
+  }
+  .btn:hover:not(:disabled){
+    background:linear-gradient(90deg,#1a5ec4,#009dcf);
+  }
+  .btn:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+    background:linear-gradient(90deg,#444,#666);
+  }
 
-  .btn{margin-top:20px;padding:14px 32px;border:none;border-radius:12px;background:linear-gradient(90deg,#2672ff,#00c6ff);color:#fff;font-weight:bold;font-size:18px;cursor:pointer;transition:background .3s;}
-  .btn:hover:not(:disabled){background:linear-gradient(90deg,#1a5ec4,#009dcf);}
-  .btn:disabled{opacity:.6;cursor:not-allowed;background:linear-gradient(90deg,#444,#666);}
+  #info{
+    margin-top:12px;
+    color:#aaa;
+    font-size:14px;
+    min-height:18px;
+  }
+  #login-form{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    width:240px;
+  }
+  #login-form input{
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    font-size:16px;
+    color:#000;
+  }
+  #error-msg{
+    color:#ff5555;
+    font-size:14px;
+    min-height:18px;
+  }
 
-  #info{margin-top:12px;color:#aaa;font-size:14px;min-height:18px;}
-  #login-form{display:flex;flex-direction:column;gap:10px;width:240px;}
-  #login-form input{padding:10px;border-radius:8px;border:none;font-size:16px;color:#000;}
-  #error-msg{color:#ff5555;font-size:14px;min-height:18px;}
+  #game-selection{
+    display:none;
+    flex-direction:column;
+    gap:15px;
+    margin-top:20px;
+  }
+  #coming-soon{
+    display:none;
+    margin-top:20px;
+    font-size:16px;
+    color:#ccc;
+  }
 
-  #game-selection{display:none;flex-direction:column;gap:15px;margin-top:20px;}
-  #coming-soon{display:none;margin-top:20px;font-size:16px;color:#ccc;}
-
-  #back-btn{position:absolute;top:20px;left:20px;font-size:26px;background:none;border:none;color:#fff;cursor:pointer;display:none;z-index:1;}
-  #back-btn:hover{color:#00c6ff;}
+  #back-btn{
+    position:absolute;
+    top:20px;
+    left:20px;
+    font-size:26px;
+    background:none;
+    border:none;
+    color:#fff;
+    cursor:pointer;
+    display:none;
+    z-index:1;
+  }
+  #back-btn:hover{
+    color:#00c6ff;
+  }
 </style>
 </head>
 <body>
@@ -90,49 +220,78 @@
     e.preventDefault();
     const id = +document.getElementById("accountId").value;
     if(allowed.includes(id)){
-      form.style.display="none"; selection.style.display="flex";
-    } else err.textContent="Неверный ID";
+      form.style.display="none";
+      selection.style.display="flex";
+      err.textContent = "";
+    } else {
+      err.textContent="Неверный ID";
+    }
   });
 
-  minesBtn.onclick = ()=>{
-    selection.style.display="none"; back.style.display="block";
-    grid.style.display="grid"; getBtn.style.display="block"; info.style.display="block"; soon.style.display="none";
+  minesBtn.onclick = () => {
+    selection.style.display = "none";
+    back.style.display = "block";
+    grid.style.display = "grid";
+    getBtn.style.display = "block";
+    info.style.display = "block";
+    soon.style.display = "none";
     createGrid();
   };
 
-  luckyBtn.onclick = ()=>{
-    selection.style.display="none"; back.style.display="block";
-    grid.style.display="none"; getBtn.style.display="none"; info.style.display="none"; soon.style.display="block";
+  luckyBtn.onclick = () => {
+    selection.style.display = "none";
+    back.style.display = "block";
+    grid.style.display = "none";
+    getBtn.style.display = "none";
+    info.style.display = "none";
+    soon.style.display = "block";
   };
 
-  back.onclick = ()=>{
-    clearInterval(timer); getBtn.disabled=false;
-    grid.style.display="none"; getBtn.style.display="none"; info.style.display="none"; soon.style.display="none"; back.style.display="none"; selection.style.display="flex";
+  back.onclick = () => {
+    clearInterval(timer);
+    getBtn.disabled = false;
+    grid.style.display = "none";
+    getBtn.style.display = "none";
+    info.style.display = "none";
+    soon.style.display = "none";
+    back.style.display = "none";
+    selection.style.display = "flex";
   };
 
-  getBtn.onclick = ()=>{
-    getBtn.disabled=true;
-    let t=30; info.textContent=`Следующий сигнал через ${t} сек.`;
-    timer = setInterval(()=>{
-      t--; if(t>0) info.textContent=`Следующий сигнал через ${t} сек.`;
-      else{ clearInterval(timer); getBtn.disabled=false; info.textContent="Можно снова."; }
-    },1000);
+  getBtn.onclick = () => {
+    getBtn.disabled = true;
+    let t = 30;
+    info.textContent = `Следующий сигнал через ${t} сек.`;
+    timer = setInterval(() => {
+      t--;
+      if(t > 0) {
+        info.textContent = `Следующий сигнал через ${t} сек.`;
+      } else {
+        clearInterval(timer);
+        getBtn.disabled = false;
+        info.textContent = "Можно снова.";
+      }
+    }, 1000);
 
-    const count = Math.floor(Math.random()*5)+3;
-    document.querySelectorAll(".cell").forEach(c=>c.classList.remove("star"));
-    const sel=new Set();
-    while(sel.size<count) sel.add(Math.floor(Math.random()*total));
-    Array.from(sel).forEach((i,o)=>setTimeout(()=>document.querySelectorAll(".cell")[i].classList.add("star"),o*150));
+    const count = Math.floor(Math.random() * 5) + 3;
+    document.querySelectorAll(".cell").forEach(c => c.classList.remove("star"));
+    const sel = new Set();
+    while(sel.size < count) sel.add(Math.floor(Math.random() * total));
+    Array.from(sel).forEach((i, o) => setTimeout(() => document.querySelectorAll(".cell")[i].classList.add("star"), o * 150));
   };
 
   function createGrid(){
-    grid.innerHTML="";
-    for(let i=0;i<total;i++){
-      const div=document.createElement("div"); 
-      div.className="cell"; div.dataset.i=i;
+    grid.innerHTML = "";
+    for(let i = 0; i < total; i++){
+      const div = document.createElement("div");
+      div.className = "cell";
+      div.dataset.i = i;
       div.innerHTML = `
-        <svg viewBox="0 0 100 100"><rect x="8" y="8" width="84" height="84" rx="10" fill="rgba(255,255,255,0.05)"/></svg>
-        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzI...==" class="star-img" alt="★">`;
+        <svg viewBox="0 0 100 100" preserveAspectRatio="xMidYMid meet" style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;">
+          <rect x="8" y="8" width="84" height="84" rx="10" />
+        </svg>
+        <img src="data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjZmFkZDQ2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIxNiIgdmlld0JveD0iMCAwIDE2IDE2Ij48cGF0aCBkPSJNOC4wODMgMS41ODVsMi4wOTkgNC4yMTMgNC42NjkuNjc3LTIuNjg4IDMuNDk2LjcxNiA0LjY4Ni00LjE5My0yLjIxMi00LjE5MyAyLjIxMi43MTYtNC42ODYtMi42ODgtMy40OTYgNC42NjktLjY3NyAyLjA5OS00LjIxM3oiLz48L3N2Zz4=" alt="★" class="star-img" />
+      `;
       grid.appendChild(div);
     }
   }
@@ -140,4 +299,3 @@
 
 </body>
 </html>
-
