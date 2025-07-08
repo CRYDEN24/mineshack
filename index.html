@@ -1,316 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <title>SOFT AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      color: #fff;
-      text-align: center;
-      position: relative;
+<meta charset="UTF-8"/>
+<title>SOFT AI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{overflow:hidden;font-family:sans-serif;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;position:relative;background:#0b0f1a;}
+  #tsparticles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
 
-      background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
-      background-size: 600% 600%;
-      animation: gradientBackground 15s ease infinite;
-    }
+  h2{margin-bottom:20px;font-size:1.8em;}
+  .grid{display:grid;grid-template-columns:repeat(5,60px);grid-gap:12px;}
+  .cell{width:60px;height:60px;background:linear-gradient(to bottom,#3bd4e6,#1f839d);border-radius:10px;box-shadow:inset 0 0 8px rgba(255,255,255,0.1),0 6px 12px rgba(0,0,0,0.4);position:relative; cursor:pointer;transition:transform .2s;}
+  .cell:hover{transform:scale(1.05);}
+  .cell.star{animation:pulseGlow .8s ease forwards;}
 
-    @keyframes gradientBackground {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+  @keyframes pulseGlow{
+    0%{box-shadow:0 0 0 rgba(255,215,0,0.2);transform:scale(1);}
+    50%{box-shadow:0 0 20px rgba(255,215,0,0.8);transform:scale(1.2);}
+    100%{box-shadow:0 0 10px rgba(255,215,0,0.4);transform:scale(1.05);}
+  }
 
-    h2 {
-      margin-top: 20px;
-    }
+  .star-img{position:absolute;top:50%;left:50%;width:30px;height:30px;transform:translate(-50%,-50%) scale(0);opacity:0;transition:all .4s;}
+  .cell.star .star-img{transform:translate(-50%,-50%) scale(1);opacity:1;}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(5, 60px);
-      grid-gap: 12px;
-      margin-top: 20px;
-    }
+  .btn{margin-top:20px;padding:14px 32px;border:none;border-radius:12px;background:linear-gradient(90deg,#2672ff,#00c6ff);color:#fff;font-weight:bold;font-size:18px;cursor:pointer;transition:background .3s;}
+  .btn:hover:not(:disabled){background:linear-gradient(90deg,#1a5ec4,#009dcf);}
+  .btn:disabled{opacity:.6;cursor:not-allowed;background:linear-gradient(90deg,#444,#666);}
 
-    .cell {
-      width: 60px;
-      height: 60px;
-      background: #111827;
-      border-radius: 14px;
-      box-shadow: inset 0 0 10px #0f172a, 0 0 15px rgba(0,255,255,0.1);
-      position: relative;
-      cursor: pointer;
-      transition: transform 0.2s ease-in-out;
-    }
+  #info{margin-top:12px;color:#aaa;font-size:14px;min-height:18px;}
+  #login-form{display:flex;flex-direction:column;gap:10px;width:240px;}
+  #login-form input{padding:10px;border-radius:8px;border:none;font-size:16px;color:#000;}
+  #error-msg{color:#ff5555;font-size:14px;min-height:18px;}
 
-    .cell:hover {
-      transform: scale(1.05);
-    }
+  #game-selection{display:none;flex-direction:column;gap:15px;margin-top:20px;}
+  #coming-soon{display:none;margin-top:20px;font-size:16px;color:#ccc;}
 
-    .cell svg {
-      width: 60%;
-      height: 60%;
-      opacity: 0.2;
-      transition: opacity 0.3s ease;
-    }
-
-    .cell:hover svg {
-      opacity: 0.4;
-    }
-
-    .cell.star {
-      animation: pulseGlow 0.8s ease forwards;
-    }
-
-    @keyframes pulseGlow {
-      0% {
-        box-shadow: 0 0 0 rgba(255,215,0,0.1);
-        transform: scale(1);
-      }
-      50% {
-        box-shadow: 0 0 20px rgba(255,215,0,0.8);
-        transform: scale(1.2);
-      }
-      100% {
-        box-shadow: 0 0 10px rgba(255,215,0,0.4);
-        transform: scale(1.05);
-      }
-    }
-
-    .star-img {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 28px;
-      height: 28px;
-      transform: translate(-50%, -50%) scale(0);
-      opacity: 0;
-      transition: all 0.4s ease;
-    }
-
-    .cell.star .star-img {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-    }
-
-    .btn {
-      margin-top: 20px;
-      background: linear-gradient(90deg, #2672ff, #00c6ff);
-      padding: 14px 32px;
-      border: none;
-      border-radius: 12px;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .btn:hover:not(:disabled) {
-      background: linear-gradient(90deg, #1a5ec4, #009dcf);
-    }
-
-    .btn:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-      background: linear-gradient(90deg, #444, #666);
-    }
-
-    #info {
-      margin-top: 12px;
-      color: #aaa;
-      font-size: 14px;
-      min-height: 18px;
-    }
-
-    #login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 20px;
-      width: 240px;
-    }
-
-    #login-form input {
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-      color: #000;
-    }
-
-    #error-msg {
-      color: #ff5555;
-      font-size: 14px;
-      min-height: 18px;
-    }
-
-    #game-selection {
-      display: none;
-      flex-direction: column;
-      gap: 15px;
-      margin-top: 30px;
-    }
-
-    #coming-soon {
-      display: none;
-      margin-top: 20px;
-      font-size: 16px;
-      color: #ccc;
-    }
-
-    #back-btn {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      display: none;
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 26px;
-      cursor: pointer;
-      padding: 4px 8px;
-      z-index: 10;
-    }
-
-    #back-btn:hover {
-      color: #00c6ff;
-    }
-  </style>
+  #back-btn{position:absolute;top:20px;left:20px;font-size:26px;background:none;border:none;color:#fff;cursor:pointer;display:none;z-index:1;}
+  #back-btn:hover{color:#00c6ff;}
+</style>
 </head>
 <body>
-  <h2>SOFT AI</h2>
 
-  <form id="login-form">
-    <input type="number" id="accountId" placeholder="Введите ваш 1Win ID" required/>
-    <button type="submit" class="btn">Войти</button>
-    <div id="error-msg"></div>
-  </form>
+<div id="tsparticles"></div>
 
-  <div id="game-selection">
-    <button class="btn" id="btn-mines">Mines</button>
-    <button class="btn" id="btn-lucky">Lucky Jet</button>
-  </div>
+<h2>SOFT AI</h2>
 
-  <button id="back-btn">←</button>
+<form id="login-form">
+  <input type="number" id="accountId" placeholder="Введите ваш ID" required />
+  <button class="btn">Войти</button>
+  <div id="error-msg"></div>
+</form>
 
-  <div class="grid" id="grid" style="display:none;"></div>
-  <button class="btn" id="btn" onclick="generateStars()" style="display:none;">Получить сигнал</button>
-  <div id="info" style="display:none;">Сигнал можно получить только раз в 30 секунд.</div>
+<div id="game-selection">
+  <button class="btn" id="btn-mines">Mines</button>
+  <button class="btn" id="btn-lucky">Lucky Jet</button>
+</div>
 
-  <div id="coming-soon">Скоро запуск софта</div>
+<button id="back-btn">←</button>
 
-  <script>
-    const allowedAccountIds = [111111, 222222, 333333];
+<div class="grid" id="grid" style="display:none;"></div>
+<button class="btn" id="btn-get" style="display:none;">Получить сигнал</button>
+<div id="info" style="display:none;">Сигнал можно получить только раз в 30 секунд.</div>
+<div id="coming-soon">Скоро запуск софта</div>
 
-    const loginForm = document.getElementById('login-form');
-    const errorMsg = document.getElementById('error-msg');
-    const gameSelection = document.getElementById('game-selection');
-    const btnMines = document.getElementById('btn-mines');
-    const btnLucky = document.getElementById('btn-lucky');
-    const gridEl = document.getElementById('grid');
-    const btn = document.getElementById('btn');
-    const info = document.getElementById('info');
-    const comingSoon = document.getElementById('coming-soon');
-    const backBtn = document.getElementById('back-btn');
+<script>
+  tsParticles.load("tsparticles", {
+    fpsLimit: 60,
+    particles: {
+      number:{value:60,density:{enable:true,area:800}},
+      color:{value:"#2db7f5"},
+      shape:{type:"circle"},
+      opacity:{value:0.5,anim:{enable:true,speed:0.8,opacity_min:0.1,sync:false}},
+      size:{value:{min:1,max:4}},
+      move:{enable:true,speed:0.5,random:true,outMode:"out"}
+    },
+    interactivity:{detect_on:"canvas",events:{resize:true}},
+    retina_detect:true
+  });
 
-    const total = 25;
-    let countdownInterval = null;
+  const allowed = [111111,222222];
+  const form = document.getElementById("login-form"), err = document.getElementById("error-msg");
+  const selection = document.getElementById("game-selection"), minesBtn = document.getElementById("btn-mines"), luckyBtn = document.getElementById("btn-lucky");
+  const grid = document.getElementById("grid"), getBtn = document.getElementById("btn-get"), info = document.getElementById("info"), soon = document.getElementById("coming-soon"), back = document.getElementById("back-btn");
+  const total = 25; let timer;
 
-    loginForm.addEventListener('submit', e => {
-      e.preventDefault();
-      const id = Number(document.getElementById('accountId').value.trim());
-      if (allowedAccountIds.includes(id)) {
-        loginForm.style.display = 'none';
-        gameSelection.style.display = 'flex';
-      } else {
-        errorMsg.textContent = 'Доступ запрещён: неверный ID.';
-      }
-    });
+  form.addEventListener("submit", e => {
+    e.preventDefault();
+    const id = +document.getElementById("accountId").value;
+    if(allowed.includes(id)){
+      form.style.display="none"; selection.style.display="flex";
+    } else err.textContent="Неверный ID";
+  });
 
-    btnMines.addEventListener('click', () => {
-      gameSelection.style.display = 'none';
-      backBtn.style.display = 'inline-block';
-      gridEl.style.display = 'grid';
-      btn.style.display = 'inline-block';
-      info.style.display = 'block';
-      comingSoon.style.display = 'none';
-      createGrid();
-    });
+  minesBtn.onclick = ()=>{
+    selection.style.display="none"; back.style.display="block";
+    grid.style.display="grid"; getBtn.style.display="block"; info.style.display="block"; soon.style.display="none";
+    createGrid();
+  };
 
-    btnLucky.addEventListener('click', () => {
-      gameSelection.style.display = 'none';
-      backBtn.style.display = 'inline-block';
-      gridEl.style.display = 'none';
-      btn.style.display = 'none';
-      info.style.display = 'none';
-      comingSoon.style.display = 'block';
-    });
+  luckyBtn.onclick = ()=>{
+    selection.style.display="none"; back.style.display="block";
+    grid.style.display="none"; getBtn.style.display="none"; info.style.display="none"; soon.style.display="block";
+  };
 
-    backBtn.addEventListener('click', () => {
-      if (countdownInterval) clearInterval(countdownInterval);
-      countdownInterval = null;
-      gridEl.style.display = 'none';
-      btn.style.display = 'none';
-      info.style.display = 'none';
-      comingSoon.style.display = 'none';
-      backBtn.style.display = 'none';
-      gameSelection.style.display = 'flex';
-    });
+  back.onclick = ()=>{
+    clearInterval(timer); getBtn.disabled=false;
+    grid.style.display="none"; getBtn.style.display="none"; info.style.display="none"; soon.style.display="none"; back.style.display="none"; selection.style.display="flex";
+  };
 
-    function createGrid() {
-      gridEl.innerHTML = '';
-      for (let i = 0; i < total; i++) {
-        const div = document.createElement('div');
-        div.className = 'cell';
-        div.dataset.i = i;
+  getBtn.onclick = ()=>{
+    getBtn.disabled=true;
+    let t=30; info.textContent=`Следующий сигнал через ${t} сек.`;
+    timer = setInterval(()=>{
+      t--; if(t>0) info.textContent=`Следующий сигнал через ${t} сек.`;
+      else{ clearInterval(timer); getBtn.disabled=false; info.textContent="Можно снова."; }
+    },1000);
 
-        // SVG квадратик внутри клетки
-        div.innerHTML = `
-          <svg viewBox="0 0 100 100">
-            <rect x="10" y="10" width="80" height="80" rx="12" ry="12" fill="#1e293b"/>
-          </svg>
-          <img class="star-img" src="data:image/svg+xml;base64,PHN2ZyB...
-          " alt="★"/>`;
-        gridEl.appendChild(div);
-      }
+    const count = Math.floor(Math.random()*5)+3;
+    document.querySelectorAll(".cell").forEach(c=>c.classList.remove("star"));
+    const sel=new Set();
+    while(sel.size<count) sel.add(Math.floor(Math.random()*total));
+    Array.from(sel).forEach((i,o)=>setTimeout(()=>document.querySelectorAll(".cell")[i].classList.add("star"),o*150));
+  };
+
+  function createGrid(){
+    grid.innerHTML="";
+    for(let i=0;i<total;i++){
+      const div=document.createElement("div"); 
+      div.className="cell"; div.dataset.i=i;
+      div.innerHTML = `
+        <svg viewBox="0 0 100 100"><rect x="8" y="8" width="84" height="84" rx="10" fill="rgba(255,255,255,0.05)"/></svg>
+        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzI...==" class="star-img" alt="★">`;
+      grid.appendChild(div);
     }
+  }
+</script>
 
-    function generateStars() {
-      btn.disabled = true;
-      let timeLeft = 30;
-      info.textContent = `Следующий сигнал через ${timeLeft} сек.`;
-      if (countdownInterval) clearInterval(countdownInterval);
-      countdownInterval = setInterval(() => {
-        timeLeft--;
-        if (timeLeft > 0) {
-          info.textContent = `Следующий сигнал через ${timeLeft} сек.`;
-        } else {
-          clearInterval(countdownInterval);
-          info.textContent = 'Можно снова.';
-          btn.disabled = false;
-        }
-      }, 1000);
-
-      const count = Math.floor(Math.random()*5)+3;
-      const cells = document.querySelectorAll('.cell');
-      cells.forEach(c => c.classList.remove('star'));
-      const sel = new Set();
-      while (sel.size < count) sel.add(Math.floor(Math.random()*total));
-      Array.from(sel).forEach((i, o) => {
-        setTimeout(() => cells[i].classList.add('star'), o*150);
-      });
-    }
-  </script>
 </body>
 </html>
 
