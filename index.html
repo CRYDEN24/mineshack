@@ -12,18 +12,8 @@
 
   h2{margin-bottom:20px;font-size:1.8em;}
   .grid{display:grid;grid-template-columns:repeat(5,60px);grid-gap:12px;}
-  .cell{width:60px;height:60px;background:linear-gradient(to bottom,#3bd4e6,#1f839d);border-radius:10px;box-shadow:inset 0 0 8px rgba(255,255,255,0.1),0 6px 12px rgba(0,0,0,0.4);position:relative; cursor:pointer;transition:transform .2s;}
+  .cell{width:60px;height:60px;background:none;border-radius:10px;box-shadow:inset 0 0 8px rgba(255,255,255,0.1),0 6px 12px rgba(0,0,0,0.4);position:relative; cursor:pointer;transition:transform .2s;}
   .cell:hover{transform:scale(1.05);}
-  .cell.star{animation:pulseGlow .8s ease forwards;}
-
-  @keyframes pulseGlow{
-    0%{box-shadow:0 0 0 rgba(255,215,0,0.2);transform:scale(1);}
-    50%{box-shadow:0 0 20px rgba(255,215,0,0.8);transform:scale(1.2);}
-    100%{box-shadow:0 0 10px rgba(255,215,0,0.4);transform:scale(1.05);}
-  }
-
-  .star-img{position:absolute;top:50%;left:50%;width:30px;height:30px;transform:translate(-50%,-50%) scale(0);opacity:0;transition:all .4s;}
-  .cell.star .star-img{transform:translate(-50%,-50%) scale(1);opacity:1;}
 
   .btn{margin-top:20px;padding:14px 32px;border:none;border-radius:12px;background:linear-gradient(90deg,#2672ff,#00c6ff);color:#fff;font-weight:bold;font-size:18px;cursor:pointer;transition:background .3s;}
   .btn:hover:not(:disabled){background:linear-gradient(90deg,#1a5ec4,#009dcf);}
@@ -84,119 +74,192 @@
   const form = document.getElementById("login-form"), err = document.getElementById("error-msg");
   const selection = document.getElementById("game-selection"), minesBtn = document.getElementById("btn-mines"), luckyBtn = document.getElementById("btn-lucky");
   const grid = document.getElementById("grid"), getBtn = document.getElementById("btn-get"), info = document.getElementById("info"), soon = document.getElementById("coming-soon"), back = document.getElementById("back-btn");
-  const total = 25; let timer;
+  const total = 25; 
+  let timer;
 
   form.addEventListener("submit", e => {
     e.preventDefault();
     const id = +document.getElementById("accountId").value;
     if(allowed.includes(id)){
-      form.style.display="none"; selection.style.display="flex";
-    } else err.textContent="Неверный ID";
+      form.style.display="none"; 
+      selection.style.display="flex";
+      err.textContent = "";
+    } else {
+      err.textContent="Неверный ID";
+    }
   });
 
   minesBtn.onclick = ()=>{
-    selection.style.display="none"; back.style.display="block";
-    grid.style.display="grid"; getBtn.style.display="block"; info.style.display="block"; soon.style.display="none";
+    selection.style.display="none"; 
+    back.style.display="block";
+    grid.style.display="grid"; 
+    getBtn.style.display="block"; 
+    info.style.display="block"; 
+    soon.style.display="none";
     createGrid();
   };
 
   luckyBtn.onclick = ()=>{
-    selection.style.display="none"; back.style.display="block";
-    grid.style.display="none"; getBtn.style.display="none"; info.style.display="none"; soon.style.display="block";
+    selection.style.display="none"; 
+    back.style.display="block";
+    grid.style.display="none"; 
+    getBtn.style.display="none"; 
+    info.style.display="none"; 
+    soon.style.display="block";
   };
 
   back.onclick = ()=>{
-    clearInterval(timer); getBtn.disabled=false;
-    grid.style.display="none"; getBtn.style.display="none"; info.style.display="none"; soon.style.display="none"; back.style.display="none"; selection.style.display="flex";
+    clearInterval(timer); 
+    getBtn.disabled=false;
+    grid.style.display="none"; 
+    getBtn.style.display="none"; 
+    info.style.display="none"; 
+    soon.style.display="none"; 
+    back.style.display="none"; 
+    selection.style.display="flex";
   };
 
-  getBtn.onclick = ()=>{
-    getBtn.disabled=true;
-    let t=30; info.textContent=`Следующий сигнал через ${t} сек.`;
-    timer = setInterval(()=>{
-      t--; if(t>0) info.textContent=`Следующий сигнал через ${t} сек.`;
-      else{ clearInterval(timer); getBtn.disabled=false; info.textContent="Можно снова."; }
-    },1000);
-
-    const count = Math.floor(Math.random()*5)+3;
-    document.querySelectorAll(".cell").forEach(c=>c.classList.remove("star"));
-    const sel=new Set();
-    while(sel.size<count) sel.add(Math.floor(Math.random()*total));
-    Array.from(sel).forEach((i,o)=>setTimeout(()=>document.querySelectorAll(".cell")[i].classList.add("star"),o*150));
-  };
+  const starSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 56 56" style="width:60px; height:60px;">
+<defs>
+  <linearGradient id="Gradient-0_s_i" x1="28.392" y1="0.972" x2="40.632" y2="48.291" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#fba416" stop-opacity="0"></stop>
+    <stop offset="1" stop-color="#fdbb4e" stop-opacity="0.63"></stop>
+  </linearGradient>
+  <linearGradient id="Gradient-1_s_i" x1="28.392" y1="0.972" x2="40.633" y2="48.291" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#fdbb4e" stop-opacity="0"></stop>
+    <stop offset="1" stop-color="#fdbb4e" stop-opacity="0.63"></stop>
+  </linearGradient>
+  <linearGradient id="Gradient-3_s_i" x1="43.739" y1="37.512" x2="18.526" y2="14.674" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#feffd3" stop-opacity="0.63"></stop>
+    <stop offset="0.219" stop-color="#fafd4e" stop-opacity="0"></stop>
+    <stop offset="0.491" stop-color="#fdff8b" stop-opacity="0.56"></stop>
+    <stop offset="0.733" stop-color="#f7f990"></stop>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+    <stop offset="1" stop-color="#feffb7" stop-opacity="0"></stop>
+  </linearGradient>
+  <linearGradient id="Gradient-4_s_i" x1="28.391" y1="14.126" x2="28.026" y2="38.425" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#feffb0"></stop>
+    <stop offset="0.277" stop-color="#fff" stop-opacity="0.51"></stop>
+    <stop offset="1" stop-color="#fafd4e" stop-opacity="0.15"></stop>
+  </linearGradient>
+  <linearGradient id="Gradient-5_s_i" x1="27.214" y1="23.393" x2="27.033" y2="32.029" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#fafd4e" stop-opacity="0"></stop>
+    <stop offset="0.732" stop-color="#fafd4e" stop-opacity="0.46"></stop>
+  </linearGradient>
+  <linearGradient id="Gradient-6_s_i" x1="24.792" y1="18.563" x2="29.645" y2="23.143" gradientUnits="userSpaceOnUse">
+    <stop offset="0.224" stop-color="#fafd4e" stop-opacity="0.35"></stop>
+    <stop offset="1" stop-color="#fafd4e" stop-opacity="0"></stop>
+  </linearGradient>
+  <linearGradient id="Gradient-7_s_i" x1="0.016" y1="26.376" x2="16.573" y2="26.055" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#fff"></stop>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+  </linearGradient>
+  <radialGradient id="Gradient-2_s_i" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="rotate(52.671 -10.467 32.845) scale(31.9369)">
+    <stop offset="0.739" stop-color="#9cb6dd" stop-opacity="0"></stop>
+    <stop offset="0.898" stop-color="#c6f1ff" stop-opacity="0.37"></stop>
+    <stop offset="1" stop-color="#effbff" stop-opacity="0.7"></stop>
+  </radialGradient>
+  <mask id="Mask-1_s_i">
+    <path fill="url(#Gradient-7_s_i)" transform="rotate(30 31.002 3.397)" d="M0 0h16.959v56H0z" style="animation: 0.7s linear 0s 1 normal both running a4_t_s_i;"></path>
+  </mask>
+</defs>
+<style>
+  @keyframes star_t_s_i {
+    0% {transform:translate(28.3918px,26.0576px) scale(0,0) translate(-23.4974px,-22.4547px);animation-timing-function:cubic-bezier(0,0,.58,1);}
+    42.8571% {transform:translate(28.3918px,26.0576px) scale(1,1) translate(-23.4974px,-22.4547px);animation-timing-function:cubic-bezier(0,0,.58,1);}
+    71.4285% {transform:translate(28.3918px,26.0576px) scale(1.15,1.15) translate(-23.4974px,-22.4547px);animation-timing-function:cubic-bezier(0,0,.58,1);}
+    to {transform:translate(28.3918px,26.0576px) scale(1,1) translate(-23.4974px,-22.4547px);}
+  }
+  @keyframes a1_t_s_i {
+    0%,to {transform:translate(23.4966px,22.4549px);}
+  }
+  @keyframes a0_t_s_i {
+    0% {transform:scale(1.889498,1.889498) translate(-28.3911px,-27.0603px);animation-timing-function:cubic-bezier(0,0,.58,1);}
+    to {transform:scale(1,1) translate(-28.3911px,-27.0603px);}
+  }
+  @keyframes a2_t_s_i {
+    0% {transform:translate(22.2182px,22.7642px) rotate(145.526246deg) scale(.462454,.462454) translate(-27.1127px,-26.3671px);animation-timing-function:cubic-bezier(0,0,.58,1);}
+    to {transform:translate(22.2182px,22.7642px) rotate(0deg) scale(1,1) translate(-27.1127px,-26.3671px);}
+  }
+  @keyframes a2_o_s_i {
+    0% {opacity:0;animation-timing-function:cubic-bezier(0,0,.58,1);}
+    to {opacity:1;}
+  }
+  @keyframes a3_t_s_i {
+    0% {transform:translate(18.9293px,24.3971px) rotate(-53.127557deg) scale(.322292,.322292) translate(-26.7458px,-20.6401px);animation-timing-function:cubic-bezier(0,0,.58,1);}
+    to {transform:translate(21.8514px,17.0372px) rotate(0deg) scale(1,1) translate(-26.7458px,-20.6401px);}
+  }
+  @keyframes a3_o_s_i {
+    0% {opacity:0;animation-timing-function:cubic-bezier(0,0,.58,1);}
+    to {opacity:1;}
+  }
+  @keyframes a4_t_s_i {
+    0% {transform:translate(-.804393px,13.4424px) rotate(30deg) translate(-8.47967px,-28px);}
+    28.5714% {transform:translate(-.804393px,13.4424px) rotate(30deg) translate(-8.47967px,-28px);animation-timing-function:cubic-bezier(.42,0,.58,1);}
+    85.7142%,to {transform:translate(58.8824px,41.1538px) rotate(30deg) translate(-8.47967px,-28px);}
+  }
+</style>
+<g id="star" transform="matrix(0 0 0 0 28.392 26.058)" style="animation: 0.7s linear 0s 1 normal both running star_t_s_i;">
+  <path d="M26.439 4.8c.813-1.595 3.092-1.595 3.905 0l5.7 11.17a2.192 2.192 0 0 0 1.609 1.168l12.385 1.97c1.768.28 2.472 2.448 1.207 3.714l-8.862 8.873a2.193 2.193 0 0 0-.615 1.891l1.955 12.388c.279 1.768-1.565 3.107-3.16 2.295l-11.177-5.686a2.192 2.192 0 0 0-1.989 0L16.22 48.269c-1.595.812-3.439-.527-3.16-2.295l1.955-12.388a2.192 2.192 0 0 0-.615-1.89l-8.862-8.874c-1.265-1.266-.561-3.433 1.207-3.714l12.385-1.97a2.192 2.192 0 0 0 1.609-1.168l5.7-11.17Z" fill="#C22A20" transform="translate(-4.894 -3.603)"></path>
+  <path d="M26.439 4.8c.813-1.595 3.092-1.595 3.905 0l5.7 11.17a2.192 2.192 0 0 0 1.609 1.168l12.385 1.97c1.768.28 2.472 2.448 1.207 3.714l-8.862 8.873a2.193 2.193 0 0 0-.615 1.891l1.955 12.388c.279 1.768-1.565 3.107-3.16 2.295l-11.177-5.686a2.192 2.192 0 0 0-1.989 0L16.22 48.269c-1.595.812-3.439-.527-3.16-2.295l1.955-12.388a2.192 2.192 0 0 0-.615-1.89l-8.862-8.874c-1.265-1.266-.561-3.433 1.207-3.714l12.385-1.97a2.192 2.192 0 0 0 1.609-1.168l5.7-11.17Z" fill="url(#Gradient-0_s_i)" transform="translate(-4.894 -3.603)"></path>
+  <path d="M26.44 4.799c.813-1.595 3.091-1.595 3.905 0l5.7 11.17a2.192 2.192 0 0 0 1.609 1.169l12.384 1.97c1.768.28 2.473 2.448 1.208 3.714l-8.863 8.873a2.193 2.193 0 0 0-.614 1.891l1.956 12.388c.278 1.768-1.566 3.107-3.16 2.295l-11.177-5.686a2.192 2.192 0 0 0-1.99 0L16.22 48.269c-1.595.813-3.438-.526-3.159-2.294l1.956-12.388a2.192 2.192 0 0 0-.615-1.891l-8.862-8.873c-1.265-1.266-.56-3.433 1.208-3.714l12.384-1.97a2.192 2.192 0 0 0 1.609-1.169l5.7-11.17Z" fill="url(#Gradient-1_s_i)" transform="translate(-4.894 -3.603)"></path>
+  <path d="M15.904 29.6a3.97 3.97 0 1 1-7.94 0 3.97 3.97 0 0 1 7.94 0Z" fill="url(#Gradient-2_s_i)" opacity=".3" style="animation: 1.6s ease 0s infinite alternate normal none running a2_o_s_i;"></path>
+  <path d="M14.832 24.025 22.217 22.765l2.674-1.34-8.814-2.122a7.71 7.71 0 0 1-1.244 4.723Z" fill="#ffc50d" style="animation: 1.6s ease 0s infinite alternate normal none running a3_o_s_i;"></path>
+  <path d="M22.217 22.765 19.543 26.38l3.362 1.683 3.143-6.013-4.831 1.06Z" fill="#f9ba03" style="animation: 1.6s ease 0s infinite alternate normal none running a3_o_s_i;"></path>
+  <path d="M14.249 32.568a9.822 9.822 0 0 1-3.014-2.612l-1.76-1.988 2.505-3.114 2.037 1.062 1.56 5.212-1.329 1.44Z" fill="url(#Gradient-3_s_i)"></path>
+  <path d="M19.636 29.725 14.52 34.09l-3.586-3.342 7.666-2.143 1.036 1.12Z" fill="url(#Gradient-4_s_i)"></path>
+  <path d="M21.888 29.11c.309-.617.375-1.236.157-1.858l-1.467-4.565-4.041 1.203 4.77 5.115Z" fill="url(#Gradient-5_s_i)"></path>
+  <path d="m14.802 21.873 1.353 1.364-3.26 2.536a7.55 7.55 0 0 1-1.597-3.254l2.676-.646Z" fill="url(#Gradient-6_s_i)"></path>
+</g>
+</svg>`;
 
   function createGrid(){
-    grid.innerHTML="";
-    for(let i=0;i<total;i++){
-      const div=document.createElement("div"); 
-      div.className="cell"; div.dataset.i=i;
-      div.innerHTML = `
-  <svg viewBox="0 0 100 100"><rect x="8" y="8" width="84" height="84" rx="10" fill="rgba(255,255,255,0.05)"/></svg>
-  <div class="star-img" style="position:absolute;top:50%;left:50%;width:30px;height:30px;transform:translate(-50%, -50%) scale(0);opacity:0;transition:all .4s;">
-    <!-- ТВОЙ SVG КОД ЗДЕСЬ -->
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 56 56" style="width:30px;height:30px;">
-      <defs>
-        <linearGradient id="Gradient-0_s_i" x1="28.392" y1="0.972" x2="40.632" y2="48.291" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#fba416" stop-opacity="0"></stop>
-          <stop offset="1" stop-color="#fdbb4e" stop-opacity="0.63"></stop>
-        </linearGradient>
-        <linearGradient id="Gradient-1_s_i" x1="28.392" y1="0.972" x2="40.633" y2="48.291" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#fdbb4e" stop-opacity="0"></stop>
-          <stop offset="1" stop-color="#fdbb4e" stop-opacity="0.63"></stop>
-        </linearGradient>
-        <linearGradient id="Gradient-3_s_i" x1="43.739" y1="37.512" x2="18.526" y2="14.674" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#feffd3" stop-opacity="0.63"></stop>
-          <stop offset="0.219" stop-color="#fafd4e" stop-opacity="0"></stop>
-          <stop offset="0.491" stop-color="#fdff8b" stop-opacity="0.56"></stop>
-          <stop offset="0.733" stop-color="#f7f990"></stop>
-          <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
-          <stop offset="1" stop-color="#feffb7" stop-opacity="0"></stop>
-        </linearGradient>
-        <linearGradient id="Gradient-4_s_i" x1="28.391" y1="14.126" x2="28.026" y2="38.425" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#feffb0"></stop>
-          <stop offset="0.277" stop-color="#fff" stop-opacity="0.51"></stop>
-          <stop offset="1" stop-color="#fafd4e" stop-opacity="0.15"></stop>
-        </linearGradient>
-        <linearGradient id="Gradient-5_s_i" x1="27.214" y1="23.393" x2="27.033" y2="32.029" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#fafd4e" stop-opacity="0"></stop>
-          <stop offset="0.732" stop-color="#fafd4e" stop-opacity="0.46"></stop>
-        </linearGradient>
-        <linearGradient id="Gradient-6_s_i" x1="24.792" y1="18.563" x2="29.645" y2="23.143" gradientUnits="userSpaceOnUse">
-          <stop offset="0.224" stop-color="#fafd4e" stop-opacity="0.35"></stop>
-          <stop offset="1" stop-color="#fafd4e" stop-opacity="0"></stop>
-        </linearGradient>
-        <linearGradient id="Gradient-7_s_i" x1="0.016" y1="26.376" x2="16.573" y2="26.055" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#fff"></stop>
-          <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
-        </linearGradient>
-        <radialGradient id="Gradient-2_s_i" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="rotate(52.671 -10.467 32.845) scale(31.9369)">
-          <stop offset="0.739" stop-color="#9cb6dd" stop-opacity="0"></stop>
-          <stop offset="0.898" stop-color="#c6f1ff" stop-opacity="0.37"></stop>
-          <stop offset="1" stop-color="#effbff" stop-opacity="0.7"></stop>
-        </radialGradient>
-        <mask id="Mask-1_s_i">
-          <path fill="url(#Gradient-7_s_i)" transform="rotate(30 31.002 3.397)" d="M0 0h16.959v56H0z" style="animation: 0.7s linear 0s 1 normal both running a4_t_s_i;"></path>
-        </mask>
-      </defs>
-      <style>
-        @keyframes star_t_s_i {
-          0% {transform: translate(28.3918px, 26.0576px) scale(0,0) translate(-23.4974px, -22.4547px); animation-timing-function: cubic-bezier(0,0,.58,1)}
-          42.8571% {transform: translate(28.3918px, 26.0576px) scale(1,1) translate(-23.4974px, -22.4547px); animation-timing-function: cubic-bezier(0,0,.58,1)}
-          71.4285% {transform: translate(28.3918px, 26.0576px) scale(1.15,1.15) translate(-23.4974px, -22.4547px); animation-timing-function: cubic-bezier(0,0,.58,1)}
-          to {transform: translate(28.3918px, 26.0576px) scale(1,1) translate(-23.4974px, -22.4547px)}
-        }
-        /* остальные анимации тут, если нужно */
-      </style>
-      <g id="star" transform="matrix(0 0 0 0 28.392 26.058)" style="animation: 0.7s linear 0s 1 normal both running star_t_s_i;">
-        <path d="M26.439 4.8c.813-1.595 3.092-1.595 3.905 0l5.7 11.17a2.192 2.192 0 0 0 1.609 1.168l12.385 1.97c1.768.28 2.472 2.448 1.207 3.714l-8.862 8.873a2.193 2.193 0 0 0-.615 1.891l1.955 12.388c.279 1.768-1.565 3.107-3.16 2.295l-11.177-5.686a2.192 2.192 0 0 0-1.989 0L16.22 48.269c-1.595.812-3.439-.527-3.16-2.295l1.955-12.388a2.192 2.192 0 0 0-.615-1.89l-8.862-8.874c-1.265-1.266-.561-3.433 1.207-3.714l12.385-1.97a2.192 2.192 0 0 0 1.609-1.168l5.7-11.17Z" fill="#C22A20" transform="translate(-4.894 -3.603)"></path>
-        <!-- остальной SVG код ... -->
-      </g>
-    </svg>
-  </div>`;
+    grid.innerHTML = "";
+    for(let i=0; i<total; i++){
+      const div = document.createElement("div"); 
+      div.className = "cell";
+      div.dataset.i = i;
+      div.innerHTML = `<svg viewBox="0 0 100 100" style="width:60px;height:60px;">
+        <rect x="8" y="8" width="84" height="84" rx="10" fill="rgba(255,255,255,0.05)"/>
+      </svg>`;
       grid.appendChild(div);
     }
   }
+
+  getBtn.onclick = () => {
+    getBtn.disabled = true;
+    let t = 30; 
+    info.textContent = `Следующий сигнал через ${t} сек.`;
+
+    // Сбрасываем все ячейки к квадратам
+    document.querySelectorAll(".cell").forEach(cell => {
+      cell.innerHTML = `<svg viewBox="0 0 100 100" style="width:60px;height:60px;">
+        <rect x="8" y="8" width="84" height="84" rx="10" fill="rgba(255,255,255,0.05)"/>
+      </svg>`;
+    });
+
+    timer = setInterval(() => {
+      t--;
+      if(t > 0) info.textContent = `Следующий сигнал через ${t} сек.`;
+      else {
+        clearInterval(timer);
+        getBtn.disabled = false;
+        info.textContent = "Можно снова.";
+      }
+    }, 1000);
+
+    // Выбираем случайное количество сигналов от 3 до 7
+    const count = Math.floor(Math.random() * 5) + 3;
+    const selected = new Set();
+    while(selected.size < count) selected.add(Math.floor(Math.random() * total));
+
+    Array.from(selected).forEach((i, o) => setTimeout(() => {
+      const cell = document.querySelectorAll(".cell")[i];
+      cell.innerHTML = starSVG;
+    }, o * 150));
+  };
 </script>
 
 </body>
 </html>
+
