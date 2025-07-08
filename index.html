@@ -1,118 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>SOFT AI</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      margin: 0;
-      background-color: #0b0f1a;
-      font-family: sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      color: #fff;
-    }
-    h2 {
-      margin-top: 20px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(5, 50px);
-      grid-gap: 10px;
-      margin-top: 20px;
-    }
-    .cell {
-      width: 50px;
-      height: 50px;
-      background: #1b334c;
-      border-radius: 12px;
-      box-shadow: 5px 5px 12px #0a1624, -5px -5px 12px #273a5c;
-      position: relative;
-      overflow: hidden;
-    }
-    .cell.star {
-      background: #1b334c;
-    }
-    .star-img {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      transform: translate(-50%, -50%) scale(0);
-      opacity: 0;
-      transition: all 0.5s ease-out;
-    }
-    .cell.star .star-img {
-      width: 28px;
-      height: 28px;
-      transform: translate(-50%, -50%) scale(1.2);
-      opacity: 1;
-    }
-    .btn {
-      margin-top: 20px;
-      background: linear-gradient(90deg, #2672ff, #00c6ff);
-      padding: 14px 32px;
-      border: none;
-      border-radius: 12px;
-      color: white;
-      font-size: 18px;
-      font-weight: bold;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    .btn:hover:not(:disabled) {
-      background: linear-gradient(90deg, #1a5ec4, #009dcf);
-    }
-    .btn:disabled {
-      cursor: not-allowed;
-      opacity: 0.6;
-      background: linear-gradient(90deg, #444, #666);
-    }
-    #info {
-      margin-top: 12px;
-      color: #aaa;
-      font-size: 14px;
-      min-height: 18px;
-    }
-    #login-form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 20px;
-      width: 220px;
-    }
-    #login-form input {
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      font-size: 16px;
-      color: #000;
-    }
-    #error-msg {
-      color: #ff5555;
-      font-size: 14px;
-      min-height: 18px;
-    }
-    #game-selection { /* NEW */
-      display: none;
-      flex-direction: column;
-      gap: 12px;
-      margin-top: 30px;
-    }
-    #coming-soon { /* NEW */
-      display: none;
-      margin-top: 20px;
-      font-size: 16px;
-      color: #ccc;
-    }
-  </style>
+<!-- ... head и стили как раньше ... -->
+<style>
+  /* Добавим стиль для кнопки назад */
+  #back-btn {
+    margin-top: 20px;
+    display: none;
+    background: linear-gradient(90deg, #555, #888);
+    padding: 10px 22px;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+</style>
 </head>
 <body>
   <h2>SOFT AI</h2>
@@ -123,16 +24,18 @@
     <div id="error-msg"></div>
   </form>
 
-  <div id="game-selection" class="game-selection"> <!-- NEW -->
+  <div id="game-selection" class="game-selection">
     <button class="btn" id="btn-mines">Mines</button>
     <button class="btn" id="btn-lucky">Lucky Jet</button>
   </div>
+
+  <button id="back-btn">← Назад</button> <!-- NEW BACK -->
 
   <div class="grid" id="grid" style="display:none;"></div>
   <button class="btn" id="btn" onclick="generateStars()" style="display:none;">Получить сигнал</button>
   <div id="info" style="display:none;">Сигнал можно получить только раз в 30 секунд.</div>
 
-  <div id="coming-soon">Скоро запуск софта</div> <!-- NEW -->
+  <div id="coming-soon">Скоро запуск софта</div>
 
   <script>
     const allowedAccountIds = [111111, 222222, 333333];
@@ -146,6 +49,7 @@
     const btn = document.getElementById('btn');
     const info = document.getElementById('info');
     const comingSoon = document.getElementById('coming-soon');
+    const backBtn = document.getElementById('back-btn'); // NEW BACK
 
     const total = 25;
     let countdownInterval = null;
@@ -156,15 +60,16 @@
 
       if (allowedAccountIds.includes(enteredId)) {
         loginForm.style.display = 'none';
-        gameSelection.style.display = 'flex'; // NEW
+        gameSelection.style.display = 'flex';
         errorMsg.textContent = '';
       } else {
         errorMsg.textContent = 'Доступ запрещён: неверный 1Win ID.';
       }
     });
 
-    btnMines.addEventListener('click', () => { // NEW
+    btnMines.addEventListener('click', () => {
       gameSelection.style.display = 'none';
+      backBtn.style.display = 'inline-block'; // NEW BACK
       gridEl.style.display = 'grid';
       btn.style.display = 'inline-block';
       info.style.display = 'block';
@@ -172,12 +77,26 @@
       createGrid();
     });
 
-    btnLucky.addEventListener('click', () => { // NEW
+    btnLucky.addEventListener('click', () => {
       gameSelection.style.display = 'none';
+      backBtn.style.display = 'inline-block'; // NEW BACK
       gridEl.style.display = 'none';
       btn.style.display = 'none';
       info.style.display = 'none';
       comingSoon.style.display = 'block';
+    });
+
+    backBtn.addEventListener('click', () => { // NEW BACK
+      // Останавливаем таймер, если активен
+      if (countdownInterval) clearInterval(countdownInterval);
+      countdownInterval = null;
+
+      backBtn.style.display = 'none';
+      gridEl.style.display = 'none';
+      btn.style.display = 'none';
+      info.style.display = 'none';
+      comingSoon.style.display = 'none';
+      gameSelection.style.display = 'flex';
     });
 
     function createGrid() {
