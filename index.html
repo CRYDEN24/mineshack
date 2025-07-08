@@ -269,12 +269,11 @@ getBtn.onclick = () => {
   let t = 30; 
   info.textContent = `Следующий сигнал через ${t} сек.`;
 
-  // Сбрасываем все ячейки к квадратам и убираем класс звезды
-  document.querySelectorAll(".cell").forEach(cell => {
+  // Убираем звёзды с прошлых выборок, оставляя их содержимое неизменным
+  document.querySelectorAll(".cell.star").forEach(cell => {
     cell.classList.remove("star");
-    cell.innerHTML = `<svg viewBox="0 0 100 100" style="width:60px;height:60px;">
-      <rect x="8" y="8" width="84" height="84" rx="10" fill="rgba(255,255,255,0.05)"/>
-    </svg>`;
+    // Можно оставить содержимое как есть или заменить на квадрат, если нужно:
+    // cell.innerHTML = `<svg ... квадрат ... ></svg>`;
   });
 
   timer = setInterval(() => {
@@ -287,7 +286,6 @@ getBtn.onclick = () => {
     }
   }, 1000);
 
-  // Выбираем случайное количество сигналов от 3 до 7
   const count = Math.floor(Math.random() * 5) + 3;
   const selected = new Set();
   while(selected.size < count) selected.add(Math.floor(Math.random() * total));
