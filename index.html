@@ -12,7 +12,7 @@
 
   h2{margin-bottom:20px;font-size:1.8em;}
   .grid{display:grid;grid-template-columns:repeat(5,60px);grid-gap:12px;}
-  .cell{width:60px;height:60px;background:none;border-radius:10px;box-shadow:inset 0 0 8px rgba(255,255,255,0.1),0 6px 12px rgba(0,0,0,0.4);position:relative; cursor:pointer;transition:transform .2s;}
+  .cell{width:60px;height:60px;background:none;border-radius:10px;box-shadow: none !important;position:relative; cursor:pointer;transition:transform .2s;}
   .cell:hover{transform:scale(1.05);}
 
   .btn{margin-top:20px;padding:14px 32px;border:none;border-radius:12px;background:linear-gradient(90deg,#2672ff,#00c6ff);color:#fff;font-weight:bold;font-size:18px;cursor:pointer;transition:background .3s;}
@@ -264,38 +264,40 @@
   }
 }
 
-  getBtn.onclick = () => {
-    getBtn.disabled = true;
-    let t = 30; 
-    info.textContent = `Следующий сигнал через ${t} сек.`;
+getBtn.onclick = () => {
+  getBtn.disabled = true;
+  let t = 30; 
+  info.textContent = `Следующий сигнал через ${t} сек.`;
 
-    // Сбрасываем все ячейки к квадратам
-    document.querySelectorAll(".cell").forEach(cell => {
-      cell.innerHTML = `<svg viewBox="0 0 100 100" style="width:60px;height:60px;">
-        <rect x="8" y="8" width="84" height="84" rx="10" fill="rgba(255,255,255,0.05)"/>
-      </svg>`;
-    });
+  // Сбрасываем все ячейки к квадратам и убираем класс звезды
+  document.querySelectorAll(".cell").forEach(cell => {
+    cell.classList.remove("star");
+    cell.innerHTML = `<svg viewBox="0 0 100 100" style="width:60px;height:60px;">
+      <rect x="8" y="8" width="84" height="84" rx="10" fill="rgba(255,255,255,0.05)"/>
+    </svg>`;
+  });
 
-    timer = setInterval(() => {
-      t--;
-      if(t > 0) info.textContent = `Следующий сигнал через ${t} сек.`;
-      else {
-        clearInterval(timer);
-        getBtn.disabled = false;
-        info.textContent = "Можно снова.";
-      }
-    }, 1000);
+  timer = setInterval(() => {
+    t--;
+    if(t > 0) info.textContent = `Следующий сигнал через ${t} сек.`;
+    else {
+      clearInterval(timer);
+      getBtn.disabled = false;
+      info.textContent = "Можно снова.";
+    }
+  }, 1000);
 
-    // Выбираем случайное количество сигналов от 3 до 7
-    const count = Math.floor(Math.random() * 5) + 3;
-    const selected = new Set();
-    while(selected.size < count) selected.add(Math.floor(Math.random() * total));
+  // Выбираем случайное количество сигналов от 3 до 7
+  const count = Math.floor(Math.random() * 5) + 3;
+  const selected = new Set();
+  while(selected.size < count) selected.add(Math.floor(Math.random() * total));
 
-    Array.from(selected).forEach((i, o) => setTimeout(() => {
-      const cell = document.querySelectorAll(".cell")[i];
-      cell.innerHTML = starSVG;
-    }, o * 150));
-  };
+  Array.from(selected).forEach((i, o) => setTimeout(() => {
+    const cell = document.querySelectorAll(".cell")[i];
+    cell.classList.add("star");
+    cell.innerHTML = starSVG;
+  }, o * 150));
+};
 </script>
 
 </body>
