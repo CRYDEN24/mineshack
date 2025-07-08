@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>1Win SOFT AI</title>
+  <title>SOFT AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
@@ -55,7 +55,7 @@
       opacity: 1;
     }
     .btn {
-      margin-top: 30px;
+      margin-top: 20px;
       background: linear-gradient(90deg, #2672ff, #00c6ff);
       padding: 14px 32px;
       border: none;
@@ -100,10 +100,22 @@
       font-size: 14px;
       min-height: 18px;
     }
+    #game-selection { /* NEW */
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 30px;
+    }
+    #coming-soon { /* NEW */
+      display: none;
+      margin-top: 20px;
+      font-size: 16px;
+      color: #ccc;
+    }
   </style>
 </head>
 <body>
-  <h2>1Win SOFT AI</h2>
+  <h2>SOFT AI</h2>
 
   <form id="login-form">
     <input type="number" id="accountId" placeholder="Введите ваш 1Win ID" required />
@@ -111,19 +123,29 @@
     <div id="error-msg"></div>
   </form>
 
+  <div id="game-selection" class="game-selection"> <!-- NEW -->
+    <button class="btn" id="btn-mines">Mines</button>
+    <button class="btn" id="btn-lucky">Lucky Jet</button>
+  </div>
+
   <div class="grid" id="grid" style="display:none;"></div>
   <button class="btn" id="btn" onclick="generateStars()" style="display:none;">Получить сигнал</button>
   <div id="info" style="display:none;">Сигнал можно получить только раз в 30 секунд.</div>
 
+  <div id="coming-soon">Скоро запуск софта</div> <!-- NEW -->
+
   <script>
-    // Список разрешённых 1Win ID — добавьте туда нужные
     const allowedAccountIds = [111111, 222222, 333333];
 
     const loginForm = document.getElementById('login-form');
     const errorMsg = document.getElementById('error-msg');
+    const gameSelection = document.getElementById('game-selection');
+    const btnMines = document.getElementById('btn-mines');
+    const btnLucky = document.getElementById('btn-lucky');
     const gridEl = document.getElementById('grid');
     const btn = document.getElementById('btn');
     const info = document.getElementById('info');
+    const comingSoon = document.getElementById('coming-soon');
 
     const total = 25;
     let countdownInterval = null;
@@ -134,14 +156,28 @@
 
       if (allowedAccountIds.includes(enteredId)) {
         loginForm.style.display = 'none';
-        gridEl.style.display = 'grid';
-        btn.style.display = 'inline-block';
-        info.style.display = 'block';
+        gameSelection.style.display = 'flex'; // NEW
         errorMsg.textContent = '';
-        createGrid();
       } else {
         errorMsg.textContent = 'Доступ запрещён: неверный 1Win ID.';
       }
+    });
+
+    btnMines.addEventListener('click', () => { // NEW
+      gameSelection.style.display = 'none';
+      gridEl.style.display = 'grid';
+      btn.style.display = 'inline-block';
+      info.style.display = 'block';
+      comingSoon.style.display = 'none';
+      createGrid();
+    });
+
+    btnLucky.addEventListener('click', () => { // NEW
+      gameSelection.style.display = 'none';
+      gridEl.style.display = 'none';
+      btn.style.display = 'none';
+      info.style.display = 'none';
+      comingSoon.style.display = 'block';
     });
 
     function createGrid() {
