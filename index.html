@@ -74,7 +74,46 @@
   const form = document.getElementById("login-form"), err = document.getElementById("error-msg");
   const selection = document.getElementById("game-selection"), minesBtn = document.getElementById("btn-mines"), luckyBtn = document.getElementById("btn-lucky");
   const grid = document.getElementById("grid"), getBtn = document.getElementById("btn-get"), info = document.getElementById("info"), soon = document.getElementById("coming-soon"), back = document.getElementById("back-btn");
-  const total = 25; 
+  const total = 25;
+const newSquareSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54" style="width:60px; height:60px;">
+<defs>
+  <radialGradient id="Gradient-2_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+    <stop offset="0" stop-color="#1c2130"></stop>
+    <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+  </radialGradient>
+  <radialGradient id="Gradient-3_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+    <stop offset="0" stop-color="#1c2130"></stop>
+    <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+  </radialGradient>
+  <linearGradient id="Gradient-0_c_2_r4" x1="58.152" y1="24.257" x2="-3.614" y2="28.984" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+    <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+    <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+    <stop offset="0.733" stop-color="#9af8f0"></stop>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+    <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+  </linearGradient>
+  <linearGradient id="Gradient-1_c_2_r4" x1="24" y1="0" x2="24" y2="48" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#37b0ce"></stop>
+    <stop offset="1" stop-color="#01586b"></stop>
+  </linearGradient>
+  <clipPath id="clip0_366_7284_c_2_r">
+    <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+  </clipPath>
+</defs>
+<style>
+  @keyframes a0_t_c_2_r{0%{transform:translate(28px,28px) scale(0,0) translate(-28px,-28px);animation-timing-function:cubic-bezier(0,0,.58,1)}to{transform:translate(28px,28px) scale(1,1) translate(-28px,-28px)}}
+  @keyframes a1_o_c_2_r{0%{opacity:.6}to{opacity:0}}
+</style>
+<g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)" style="animation: 0.25s linear 0s 1 normal both running a0_t_c_2_r;">
+  <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+  <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r4)" transform="translate(2 2)"></rect>
+  <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r4)" transform="translate(4 4)"></rect>
+  <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z" fill="url(#Gradient-2_c_2_r4)"></path>
+  <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z" fill="url(#Gradient-3_c_2_r4)"></path>
+  <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E" style="animation: 0.25s linear 0s 1 normal both running a1_o_c_2_r;"></rect>
+</g>
+</svg>`; 
   let timer;
 
   form.addEventListener("submit", e => {
@@ -215,45 +254,6 @@
 
  function createGrid(){
   grid.innerHTML = "";
-  const newSquareSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54" style="width:60px; height:60px;">
-<defs>
-  <radialGradient id="Gradient-2_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
-    <stop offset="0" stop-color="#1c2130"></stop>
-    <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
-  </radialGradient>
-  <radialGradient id="Gradient-3_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
-    <stop offset="0" stop-color="#1c2130"></stop>
-    <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
-  </radialGradient>
-  <linearGradient id="Gradient-0_c_2_r4" x1="58.152" y1="24.257" x2="-3.614" y2="28.984" gradientUnits="userSpaceOnUse">
-    <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
-    <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
-    <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
-    <stop offset="0.733" stop-color="#9af8f0"></stop>
-    <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
-    <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
-  </linearGradient>
-  <linearGradient id="Gradient-1_c_2_r4" x1="24" y1="0" x2="24" y2="48" gradientUnits="userSpaceOnUse">
-    <stop offset="0" stop-color="#37b0ce"></stop>
-    <stop offset="1" stop-color="#01586b"></stop>
-  </linearGradient>
-  <clipPath id="clip0_366_7284_c_2_r">
-    <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
-  </clipPath>
-</defs>
-<style>
-  @keyframes a0_t_c_2_r{0%{transform:translate(28px,28px) scale(0,0) translate(-28px,-28px);animation-timing-function:cubic-bezier(0,0,.58,1)}to{transform:translate(28px,28px) scale(1,1) translate(-28px,-28px)}}
-  @keyframes a1_o_c_2_r{0%{opacity:.6}to{opacity:0}}
-</style>
-<g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)" style="animation: 0.25s linear 0s 1 normal both running a0_t_c_2_r;">
-  <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
-  <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r4)" transform="translate(2 2)"></rect>
-  <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r4)" transform="translate(4 4)"></rect>
-  <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z" fill="url(#Gradient-2_c_2_r4)"></path>
-  <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z" fill="url(#Gradient-3_c_2_r4)"></path>
-  <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E" style="animation: 0.25s linear 0s 1 normal both running a1_o_c_2_r;"></rect>
-</g>
-</svg>`;
 
   for(let i=0; i<total; i++){
     const div = document.createElement("div"); 
@@ -265,27 +265,30 @@
 }
 
 getBtn.onclick = () => {
-  getBtn.disabled = true;
+  if(getBtn.disabled) return; // защита от повторного нажатия (на всякий случай)
+
+  getBtn.disabled = true;    // блокируем кнопку сразу
   let t = 30; 
   info.textContent = `Следующий сигнал через ${t} сек.`;
 
-  // Убираем звёзды с прошлых выборок, оставляя их содержимое неизменным
+  // Сброс звёзд (если были)
   document.querySelectorAll(".cell.star").forEach(cell => {
     cell.classList.remove("star");
-    // Можно оставить содержимое как есть или заменить на квадрат, если нужно:
-    // cell.innerHTML = `<svg ... квадрат ... ></svg>`;
+    cell.innerHTML = newSquareSVG;  // заменяем на квадрат
   });
 
   timer = setInterval(() => {
     t--;
-    if(t > 0) info.textContent = `Следующий сигнал через ${t} сек.`;
-    else {
+    if(t > 0) {
+      info.textContent = `Следующий сигнал через ${t} сек.`;
+    } else {
       clearInterval(timer);
-      getBtn.disabled = false;
+      getBtn.disabled = false;       // разблокируем кнопку по окончании таймера
       info.textContent = "Можно снова.";
     }
   }, 1000);
 
+  // Показываем новые звезды с задержкой
   const count = Math.floor(Math.random() * 5) + 3;
   const selected = new Set();
   while(selected.size < count) selected.add(Math.floor(Math.random() * total));
