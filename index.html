@@ -22,52 +22,6 @@
   .btn{margin-top:20px;padding:14px 32px;border:none;border-radius:12px;background:linear-gradient(90deg,#2672ff,#00c6ff);color:#fff;font-weight:bold;font-size:18px;cursor:pointer;transition:background .3s;}
   .btn:hover:not(:disabled){background:linear-gradient(90deg,#1a5ec4,#009dcf);}
   .btn:disabled{opacity:.6;cursor:not-allowed;background:linear-gradient(90deg,#444,#666);}
-.trap-selector {
-  display: none;
-  margin-top: 20px;
-  align-items: center;
-  justify-content: center;
-  gap: 30px;
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-.trap-display {
-  text-align: center;
-}
-
-#trap-value {
-  font-size: 32px;
-  font-weight: bold;
-  color: #00c6ff;
-  transition: transform 0.3s ease;
-}
-
-.trap-label {
-  font-size: 14px;
-  color: #aaa;
-}
-
-.arrow-btn {
-  background: rgba(0, 198, 255, 0.1);
-  border: 2px solid #00c6ff;
-  color: #00c6ff;
-  font-size: 24px;
-  padding: 8px 14px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.arrow-btn:hover {
-  background: #00c6ff;
-  color: #000;
-  transform: scale(1.2);
-}
-
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(20px);}
-  to {opacity: 1; transform: translateY(0);}
-}
 
   #info{margin-top:12px;color:#aaa;font-size:14px;min-height:18px;}
   #login-form{display:flex;flex-direction:column;gap:10px;width:240px;}
@@ -102,14 +56,12 @@
 
 <div class="grid" id="grid" style="display:none;"></div>
 <button class="btn" id="btn-get" style="display:none;">Получить сигнал</button>
-<div class="grid" id="grid" style="display:none;"></div>
-<div id="trap-selection" class="trap-selector">
-  <button id="trap-left" class="arrow-btn">←</button>
-  <div class="trap-display">
-    <div id="trap-value">3</div>
-    <div class="trap-label">ловушки</div>
-  </div>
-  <button id="trap-right" class="arrow-btn">→</button>
+<div id="trap-selection" style="display:none; margin-top:12px; text-align:center;">
+  <span style="margin-right:10px;">Выберите число ловушек:</span>
+  <button class="trap-btn btn" data-traps="1">1</button>
+  <button class="trap-btn btn" data-traps="3">3</button>
+  <button class="trap-btn btn" data-traps="5">5</button>
+  <button class="trap-btn btn" data-traps="7">7</button>
 </div>
 <div id="info" style="display:none;">Сигнал можно получить только раз в 30 секунд.</div>
 <div id="coming-soon">Скоро запуск софта</div>
@@ -176,38 +128,22 @@ const newSquareSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height=
   let timer;
 const trapSelection = document.getElementById("trap-selection");
 let remainingTime = 0;
-let selectedTraps = 3; // значение по умолчанию
-const trapValue = document.getElementById("trap-value");
-const trapLeft = document.getElementById("trap-left");
-const trapRight = document.getElementById("trap-right");
+const trapButtons = document.querySelectorAll(".trap-btn");
+let selectedTraps = 1; // по умолчанию
 
-const trapOptions = [1, 3, 5, 7];
-
-function updateTrapDisplay() {
-  trapValue.textContent = selectedTraps;
-  trapValue.style.transform = "scale(1.2)";
-  setTimeout(() => {
-    trapValue.style.transform = "scale(1)";
-  }, 150);
-}
-
-trapLeft.addEventListener("click", () => {
-  const idx = trapOptions.indexOf(selectedTraps);
-  if (idx > 0) {
-    selectedTraps = trapOptions[idx - 1];
-    updateTrapDisplay();
-  }
+trapButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    trapButtons.forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+    selectedTraps = +btn.dataset.traps;
+  });
 });
 
-trapRight.addEventListener("click", () => {
-  const idx = trapOptions.indexOf(selectedTraps);
-  if (idx < trapOptions.length - 1) {
-    selectedTraps = trapOptions[idx + 1];
-    updateTrapDisplay();
+// Установить класс selected по умолчанию на кнопку с 3
+trapButtons.forEach(btn => {
+  if (+btn.dataset.traps === selectedTraps) {
+    btn.classList.add("selected");
   }
-});
-
-updateTrapDisplay();
 });
 
 
