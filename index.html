@@ -71,6 +71,7 @@
   font-size: 16px;
   color: #ccc;
 }
+
 </style>
 </head>
 <body>
@@ -169,15 +170,6 @@ const newSquareSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height=
   let timer;
 const trapSelection = document.getElementById("trap-selection");
 let remainingTime = 0;
-const trapButtons = document.querySelectorAll(".trap-btn");
-let selectedTraps = 1; // по умолчанию
-
-trapButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    trapButtons.forEach(b => b.classList.remove("selected"));
-    btn.classList.add("selected");
-    selectedTraps = +btn.dataset.traps;
-  });
 });
 
 // Установить класс selected по умолчанию на кнопку с 3
@@ -187,7 +179,24 @@ trapButtons.forEach(btn => {
   }
 });
 
+const trapValues = [1, 3, 5, 7];
+let trapIndex = 1; // по умолчанию индекс значения "3"
+selectedTraps = trapValues[trapIndex];
 
+const trapNumberEl = document.getElementById("trap-number");
+document.getElementById("trap-left").onclick = () => {
+  trapIndex = (trapIndex - 1 + trapValues.length) % trapValues.length;
+  updateTrapDisplay();
+};
+
+document.getElementById("trap-right").onclick = () => {
+  trapIndex = (trapIndex + 1) % trapValues.length;
+  updateTrapDisplay();
+};
+
+function updateTrapDisplay() {
+  selectedTraps = trapValues[trapIndex];
+  trapNumberEl.textContent = selectedTraps;
 
   form.addEventListener("submit", e => {
     e.preventDefault();
@@ -390,25 +399,6 @@ getBtn.onclick = () => {
     cell.classList.add("star");
     cell.innerHTML = starSVG;
   }, o * 150));
-
-const trapValues = [1, 3, 5, 7];
-let trapIndex = 1; // по умолчанию индекс значения "3"
-selectedTraps = trapValues[trapIndex];
-
-const trapNumberEl = document.getElementById("trap-number");
-document.getElementById("trap-left").onclick = () => {
-  trapIndex = (trapIndex - 1 + trapValues.length) % trapValues.length;
-  updateTrapDisplay();
-};
-
-document.getElementById("trap-right").onclick = () => {
-  trapIndex = (trapIndex + 1) % trapValues.length;
-  updateTrapDisplay();
-};
-
-function updateTrapDisplay() {
-  selectedTraps = trapValues[trapIndex];
-  trapNumberEl.textContent = selectedTraps;
 };
 </script>
 
