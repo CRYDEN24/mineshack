@@ -9,6 +9,10 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   body{overflow:hidden;font-family:sans-serif;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;position:relative;background:#0b0f1a;}
   #tsparticles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
+.trap-btn.selected {
+  background: linear-gradient(90deg, #ffae00, #ff6f00);
+  color: #fff;
+}
 
   h2{margin-bottom:20px;font-size:1.8em;}
   .grid{display:grid;grid-template-columns:repeat(5,60px);grid-gap:12px;}
@@ -52,6 +56,13 @@
 
 <div class="grid" id="grid" style="display:none;"></div>
 <button class="btn" id="btn-get" style="display:none;">Получить сигнал</button>
+<div id="trap-selection" style="display:none; margin-top:12px; text-align:center;">
+  <span style="margin-right:10px;">Выберите число ловушек:</span>
+  <button class="trap-btn btn" data-traps="1">1</button>
+  <button class="trap-btn btn" data-traps="3">3</button>
+  <button class="trap-btn btn" data-traps="5">5</button>
+  <button class="trap-btn btn" data-traps="7">7</button>
+</div>
 <div id="info" style="display:none;">Сигнал можно получить только раз в 30 секунд.</div>
 <div id="coming-soon">Скоро запуск софта</div>
 
@@ -115,6 +126,26 @@ const newSquareSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height=
 </g>
 </svg>`; 
   let timer;
+const trapSelection = document.getElementById("trap-selection");
+const trapButtons = document.querySelectorAll(".trap-btn");
+let selectedTraps = 1; // по умолчанию
+
+trapButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    trapButtons.forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+    selectedTraps = +btn.dataset.traps;
+  });
+});
+
+// Установить класс selected по умолчанию на кнопку с 3
+trapButtons.forEach(btn => {
+  if (+btn.dataset.traps === selectedTraps) {
+    btn.classList.add("selected");
+  }
+});
+
+
 
   form.addEventListener("submit", e => {
     e.preventDefault();
@@ -128,24 +159,26 @@ const newSquareSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height=
     }
   });
 
-  minesBtn.onclick = ()=>{
-    selection.style.display="none"; 
-    back.style.display="block";
-    grid.style.display="grid"; 
-    getBtn.style.display="block"; 
-    info.style.display="block"; 
-    soon.style.display="none";
-    createGrid();
-  };
+  minesBtn.onclick = () => {
+  selection.style.display = "none"; 
+  back.style.display = "block";
+  grid.style.display = "grid"; 
+  getBtn.style.display = "block"; 
+  info.style.display = "block"; 
+  soon.style.display = "none";
+  trapSelection.style.display = "block";    // <--- добавить
+  createGrid();
+};
 
-  luckyBtn.onclick = ()=>{
-    selection.style.display="none"; 
-    back.style.display="block";
-    grid.style.display="none"; 
-    getBtn.style.display="none"; 
-    info.style.display="none"; 
-    soon.style.display="block";
-  };
+ luckyBtn.onclick = () => {
+  selection.style.display = "none"; 
+  back.style.display = "block";
+  grid.style.display = "none"; 
+  getBtn.style.display = "none"; 
+  info.style.display = "none"; 
+  soon.style.display = "block";
+  trapSelection.style.display = "none";    // <--- добавить
+};
 
   back.onclick = ()=>{
     clearInterval(timer); 
