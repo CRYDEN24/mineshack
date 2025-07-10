@@ -12,7 +12,7 @@
 
   h2{margin-bottom:20px;font-size:1.8em;}
   .grid{display:grid;grid-template-columns:repeat(5,60px);grid-gap:12px;}
-  .cell{width:60px;height:60px;background:none;border-radius:10px;box-shadow: none !important;position:relative; cursor:pointer;transition:transform .2s;}
+  .cell{width:60px;height:60px;background:none;border-radius:10px;box-shadow:none !important;position:relative; cursor:pointer;transition:transform .2s;}
   .cell:hover{transform:scale(1.05);}
 
   .btn{margin-top:20px;padding:14px 32px;border:none;border-radius:12px;background:linear-gradient(90deg,#2672ff,#00c6ff);color:#fff;font-weight:bold;font-size:18px;cursor:pointer;transition:background .3s;}
@@ -29,6 +29,14 @@
 
   #back-btn{position:absolute;top:20px;left:20px;font-size:26px;background:none;border:none;color:#fff;cursor:pointer;display:none;z-index:1;}
   #back-btn:hover{color:#00c6ff;}
+
+  /* Звезда анимация */
+  @keyframes star_t_s_i {
+    0% {transform:translate(28.3918px,26.0576px) scale(0,0) translate(-23.4974px,-22.4547px);}
+    42.8571% {transform:translate(28.3918px,26.0576px) scale(1,1) translate(-23.4974px,-22.4547px);}
+    71.4285% {transform:translate(28.3918px,26.0576px) scale(1.15,1.15) translate(-23.4974px,-22.4547px);}
+    to {transform:translate(28.3918px,26.0576px) scale(1,1) translate(-23.4974px,-22.4547px);}
+  }
 </style>
 </head>
 <body>
@@ -165,38 +173,10 @@
 </defs>
 <style>
   @keyframes star_t_s_i {
-    0% {transform:translate(28.3918px,26.0576px) scale(0,0) translate(-23.4974px,-22.4547px);animation-timing-function:cubic-bezier(0,0,.58,1);}
-    42.8571% {transform:translate(28.3918px,26.0576px) scale(1,1) translate(-23.4974px,-22.4547px);animation-timing-function:cubic-bezier(0,0,.58,1);}
-    71.4285% {transform:translate(28.3918px,26.0576px) scale(1.15,1.15) translate(-23.4974px,-22.4547px);animation-timing-function:cubic-bezier(0,0,.58,1);}
+    0% {transform:translate(28.3918px,26.0576px) scale(0,0) translate(-23.4974px,-22.4547px);}
+    42.8571% {transform:translate(28.3918px,26.0576px) scale(1,1) translate(-23.4974px,-22.4547px);}
+    71.4285% {transform:translate(28.3918px,26.0576px) scale(1.15,1.15) translate(-23.4974px,-22.4547px);}
     to {transform:translate(28.3918px,26.0576px) scale(1,1) translate(-23.4974px,-22.4547px);}
-  }
-  @keyframes a1_t_s_i {
-    0%,to {transform:translate(23.4966px,22.4549px);}
-  }
-  @keyframes a0_t_s_i {
-    0% {transform:scale(1.889498,1.889498) translate(-28.3911px,-27.0603px);animation-timing-function:cubic-bezier(0,0,.58,1);}
-    to {transform:scale(1,1) translate(-28.3911px,-27.0603px);}
-  }
-  @keyframes a2_t_s_i {
-    0% {transform:translate(22.2182px,22.7642px) rotate(145.526246deg) scale(.462454,.462454) translate(-27.1127px,-26.3671px);animation-timing-function:cubic-bezier(0,0,.58,1);}
-    to {transform:translate(22.2182px,22.7642px) rotate(0deg) scale(1,1) translate(-27.1127px,-26.3671px);}
-  }
-  @keyframes a2_o_s_i {
-    0% {opacity:0;animation-timing-function:cubic-bezier(0,0,.58,1);}
-    to {opacity:1;}
-  }
-  @keyframes a3_t_s_i {
-    0% {transform:translate(18.9293px,24.3971px) rotate(-53.127557deg) scale(.322292,.322292) translate(-26.7458px,-20.6401px);animation-timing-function:cubic-bezier(0,0,.58,1);}
-    to {transform:translate(21.8514px,17.0372px) rotate(0deg) scale(1,1) translate(-26.7458px,-20.6401px);}
-  }
-  @keyframes a3_o_s_i {
-    0% {opacity:0;animation-timing-function:cubic-bezier(0,0,.58,1);}
-    to {opacity:1;}
-  }
-  @keyframes a4_t_s_i {
-    0% {transform:translate(-.804393px,13.4424px) rotate(30deg) translate(-8.47967px,-28px);}
-    28.5714% {transform:translate(-.804393px,13.4424px) rotate(30deg) translate(-8.47967px,-28px);animation-timing-function:cubic-bezier(.42,0,.58,1);}
-    85.7142%,to {transform:translate(58.8824px,41.1538px) rotate(30deg) translate(-8.47967px,-28px);}
   }
 </style>
 <g id="star" transform="matrix(0 0 0 0 28.392 26.058)" style="animation: 0.7s linear 0s 1 normal both running star_t_s_i;">
@@ -205,97 +185,94 @@
   <path d="M26.44 4.799c.813-1.595 3.091-1.595 3.905 0l5.7 11.17a2.192 2.192 0 0 0 1.609 1.169l12.384 1.97c1.768.28 2.473 2.448 1.208 3.714l-8.863 8.873a2.193 2.193 0 0 0-.614 1.891l1.956 12.388c.278 1.768-1.566 3.107-3.16 2.295l-11.177-5.686a2.192 2.192 0 0 0-1.99 0L16.22 48.269c-1.595.813-3.438-.526-3.159-2.294l1.956-12.388a2.192 2.192 0 0 0-.615-1.891l-8.862-8.873c-1.265-1.266-.56-3.433 1.208-3.714l12.384-1.97a2.192 2.192 0 0 0 1.609-1.169l5.7-11.17Z" fill="url(#Gradient-1_s_i)" transform="translate(-4.894 -3.603)"></path>
   <path d="M15.904 29.6a3.97 3.97 0 1 1-7.94 0 3.97 3.97 0 0 1 7.94 0Z" fill="url(#Gradient-2_s_i)" opacity=".3" style="animation: 1.6s ease 0s infinite alternate normal none running a2_o_s_i;"></path>
   <path d="M14.832 24.025 22.217 22.765l2.674-1.34-8.814-2.122a7.71 7.71 0 0 1-1.244 4.723Z" fill="#ffc50d" style="animation: 1.6s ease 0s infinite alternate normal none running a3_o_s_i;"></path>
-  <path d="M22.217 22.765 19.543 26.38l3.362 1.683 3.143-6.013-4.831 1.06Z" fill="#f9ba03" style="animation: 1.6s ease 0s infinite alternate normal none running a3_o_s_i;"></path>
-  <path d="M14.249 32.568a9.822 9.822 0 0 1-3.014-2.612l-1.76-1.988 2.505-3.114 2.037 1.062 1.56 5.212-1.329 1.44Z" fill="url(#Gradient-3_s_i)"></path>
-  <path d="M19.636 29.725 14.52 34.09l-3.586-3.342 7.666-2.143 1.036 1.12Z" fill="url(#Gradient-4_s_i)"></path>
-  <path d="M21.888 29.11c.309-.617.375-1.236.157-1.858l-1.467-4.565-4.041 1.203 4.77 5.115Z" fill="url(#Gradient-5_s_i)"></path>
-  <path d="m14.802 21.873 1.353 1.364-3.26 2.536a7.55 7.55 0 0 1-1.597-3.254l2.676-.646Z" fill="url(#Gradient-6_s_i)"></path>
+  <path d="m25.28 38.837-8.74-3.744-2.7-7.212a7.61 7.61 0 0 1 11.434 10.956Z" fill="url(#Gradient-4_s_i)" style="animation: 1.6s ease 0s infinite alternate normal none running a3_o_s_i;"></path>
+  <path d="m33.798 17.38-10.625-4.69-5.697 1.532-2.06 6.39 7.947 7.23 5.87-6.28 4.565-3.28Z" fill="url(#Gradient-5_s_i)" style="animation: 1.6s ease 0s infinite alternate normal none running a3_o_s_i;"></path>
+  <path d="M34.514 36.58c-1.17.843-3.276 1.74-5.955 1.882-2.684.142-6.056-1.087-7.518-2.09-2.019-1.425-4.242-3.924-3.6-6.157.626-2.063 4.041-2.63 7.265-1.49 3.223 1.14 7.73 4.14 9.129 6.325.518.77-.04 1.756-0.22 1.53Z" fill="url(#Gradient-6_s_i)" style="animation: 1.6s ease 0s infinite alternate normal none running a3_o_s_i;"></path>
 </g>
 </svg>`;
 
- function createGrid(){
-  grid.innerHTML = "";
-  const newSquareSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54" style="width:60px; height:60px;">
-<defs>
-  <radialGradient id="Gradient-2_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
-    <stop offset="0" stop-color="#1c2130"></stop>
-    <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
-  </radialGradient>
-  <radialGradient id="Gradient-3_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
-    <stop offset="0" stop-color="#1c2130"></stop>
-    <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
-  </radialGradient>
-  <linearGradient id="Gradient-0_c_2_r4" x1="58.152" y1="24.257" x2="-3.614" y2="28.984" gradientUnits="userSpaceOnUse">
-    <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
-    <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
-    <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
-    <stop offset="0.733" stop-color="#9af8f0"></stop>
-    <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
-    <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
-  </linearGradient>
-  <linearGradient id="Gradient-1_c_2_r4" x1="24" y1="0" x2="24" y2="48" gradientUnits="userSpaceOnUse">
-    <stop offset="0" stop-color="#37b0ce"></stop>
-    <stop offset="1" stop-color="#01586b"></stop>
-  </linearGradient>
-  <clipPath id="clip0_366_7284_c_2_r">
-    <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
-  </clipPath>
-</defs>
-<style>
-  @keyframes a0_t_c_2_r{0%{transform:translate(28px,28px) scale(0,0) translate(-28px,-28px);animation-timing-function:cubic-bezier(0,0,.58,1)}to{transform:translate(28px,28px) scale(1,1) translate(-28px,-28px)}}
-  @keyframes a1_o_c_2_r{0%{opacity:.6}to{opacity:0}}
-</style>
-<g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)" style="animation: 0.25s linear 0s 1 normal both running a0_t_c_2_r;">
-  <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
-  <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r4)" transform="translate(2 2)"></rect>
-  <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r4)" transform="translate(4 4)"></rect>
-  <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z" fill="url(#Gradient-2_c_2_r4)"></path>
-  <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z" fill="url(#Gradient-3_c_2_r4)"></path>
-  <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E" style="animation: 0.25s linear 0s 1 normal both running a1_o_c_2_r;"></rect>
-</g>
+  function createGrid(){
+    grid.innerHTML = "";
+    const newSquareSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54" style="width:60px; height:60px;">
+  <defs>
+    <radialGradient id="Gradient-2_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+      <stop offset="0" stop-color="#1c2130"></stop>
+      <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+    </radialGradient>
+    <radialGradient id="Gradient-3_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+      <stop offset="0" stop-color="#1c2130"></stop>
+      <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+    </radialGradient>
+    <linearGradient id="Gradient-0_c_2_r4" x1="58.152" y1="24.257" x2="-3.614" y2="28.984" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+      <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+      <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+      <stop offset="0.733" stop-color="#9af8f0"></stop>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+      <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+    </linearGradient>
+    <linearGradient id="Gradient-1_c_2_r4" x1="24" y1="0" x2="24" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#37b0ce"></stop>
+      <stop offset="1" stop-color="#01586b"></stop>
+    </linearGradient>
+    <clipPath id="clip0_366_7284_c_2_r">
+      <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+    </clipPath>
+  </defs>
+  <style>
+    @keyframes a0_t_c_2_r{0%{transform:translate(28px,28px) scale(0,0) translate(-28px,-28px);animation-timing-function:cubic-bezier(0,0,.58,1)}to{transform:translate(28px,28px) scale(1,1) translate(-28px,-28px)}}
+    @keyframes a1_o_c_2_r{0%{opacity:.6}to{opacity:0}}
+  </style>
+  <g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)" style="animation: 0.25s linear 0s 1 normal both running a0_t_c_2_r;">
+    <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+    <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r4)" transform="translate(2 2)"></rect>
+    <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r4)" transform="translate(4 4)"></rect>
+    <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z" fill="url(#Gradient-2_c_2_r4)"></path>
+    <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z" fill="url(#Gradient-3_c_2_r4)"></path>
+    <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E" style="animation: 0.25s linear 0s 1 normal both running a1_o_c_2_r;"></rect>
+  </g>
 </svg>`;
 
-  for(let i=0; i<total; i++){
-    const div = document.createElement("div"); 
-    div.className = "cell";
-    div.dataset.i = i;
-    div.innerHTML = newSquareSVG;
-    grid.appendChild(div);
-  }
-}
-
-getBtn.onclick = () => {
-  getBtn.disabled = true;
-  let t = 30; 
-  info.textContent = `Следующий сигнал через ${t} сек.`;
-
-  // Убираем звёзды с прошлых выборок, оставляя их содержимое неизменным
-  document.querySelectorAll(".cell.star").forEach(cell => {
-    cell.classList.remove("star");
-    // Можно оставить содержимое как есть или заменить на квадрат, если нужно:
-    // cell.innerHTML = `<svg ... квадрат ... ></svg>`;
-  });
-
-  timer = setInterval(() => {
-    t--;
-    if(t > 0) info.textContent = `Следующий сигнал через ${t} сек.`;
-    else {
-      clearInterval(timer);
-      getBtn.disabled = false;
-      info.textContent = "Можно снова.";
+    for(let i=0; i<total; i++){
+      const div = document.createElement("div"); 
+      div.className = "cell";
+      div.dataset.i = i;
+      div.innerHTML = newSquareSVG;
+      grid.appendChild(div);
     }
-  }, 1000);
+  }
 
-  const count = Math.floor(Math.random() * 5) + 3;
-  const selected = new Set();
-  while(selected.size < count) selected.add(Math.floor(Math.random() * total));
+  getBtn.onclick = () => {
+    getBtn.disabled = true;
+    clearStars(); // очистка звёзд перед новой анимацией
 
-  Array.from(selected).forEach((i, o) => setTimeout(() => {
-    const cell = document.querySelectorAll(".cell")[i];
-    cell.classList.add("star");
-    cell.innerHTML = starSVG;
-  }, o * 150));
-};
+    const cells = [...grid.children];
+    for(let i=0; i<cells.length; i++) {
+      const cell = cells[i];
+      // Добавляем звезду в каждую ячейку
+      const starDiv = document.createElement('div');
+      starDiv.className = 'star-wrapper';
+      starDiv.style.position = 'absolute';
+      starDiv.style.top = '0';
+      starDiv.style.left = '0';
+      starDiv.style.width = '60px';
+      starDiv.style.height = '60px';
+      starDiv.style.pointerEvents = 'none';
+      starDiv.innerHTML = starSVG;
+      cell.appendChild(starDiv);
+    }
+
+    // Разблокировка кнопки через 30 секунд
+    timer = setTimeout(() => {
+      getBtn.disabled = false;
+      clearStars();
+    }, 30000);
+  };
+
+  function clearStars(){
+    const stars = grid.querySelectorAll('.star-wrapper');
+    stars.forEach(s => s.remove());
+  }
 </script>
 
 </body>
