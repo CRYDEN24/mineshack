@@ -9,10 +9,30 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   body{overflow:hidden;font-family:sans-serif;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;position:relative;background:#0b0f1a;}
   #tsparticles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-1;}
-.trap-btn.selected {
-  background: linear-gradient(90deg, #ffae00, #ff6f00);
-  color: #fff;
-}
+
+  .trap-arrow {
+    background: linear-gradient(90deg,#2672ff,#00c6ff);
+    border: none;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    user-select:none;
+    transition: background .3s;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .trap-arrow:hover:not(:disabled) {
+    background: linear-gradient(90deg,#1a5ec4,#009dcf);
+  }
+  .trap-arrow:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: linear-gradient(90deg,#444,#666);
+  }
 
   h2{margin-bottom:20px;font-size:1.8em;}
   .grid{display:grid;grid-template-columns:repeat(5,60px);grid-gap:12px;}
@@ -22,57 +42,10 @@
   .btn{margin-top:20px;padding:14px 32px;border:none;border-radius:12px;background:linear-gradient(90deg,#2672ff,#00c6ff);color:#fff;font-weight:bold;font-size:18px;cursor:pointer;transition:background .3s;}
   .btn:hover:not(:disabled){background:linear-gradient(90deg,#1a5ec4,#009dcf);}
   .btn:disabled{opacity:.6;cursor:not-allowed;background:linear-gradient(90deg,#444,#666);}
-.trap-selector {
-  display: none;
-  margin-top: 20px;
-  align-items: center;
-  justify-content: center;
-  gap: 30px;
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-.trap-display {
-  text-align: center;
-}
-
-#trap-value {
-  font-size: 32px;
-  font-weight: bold;
-  color: #00c6ff;
-  transition: transform 0.3s ease;
-}
-
-.trap-label {
-  font-size: 14px;
-  color: #aaa;
-}
-
-.arrow-btn {
-  background: rgba(0, 198, 255, 0.1);
-  border: 2px solid #00c6ff;
-  color: #00c6ff;
-  font-size: 24px;
-  padding: 8px 14px;
-  border-radius: 50%;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.arrow-btn:hover {
-  background: #00c6ff;
-  color: #000;
-  transform: scale(1.2);
-}
-
-@keyframes fadeIn {
-  from {opacity: 0; transform: translateY(20px);}
-  to {opacity: 1; transform: translateY(0);}
-}
 
   #info{margin-top:12px;color:#aaa;font-size:14px;min-height:18px;}
   #login-form{display:flex;flex-direction:column;gap:10px;width:240px;}
   #login-form input{padding:10px;border-radius:8px;border:none;font-size:16px;color:#000;}
-  #error-msg{color:#ff5555;font-size:14px;min-height:18px;}
 
   #game-selection{display:none;flex-direction:column;gap:15px;margin-top:20px;}
   #coming-soon{display:none;margin-top:20px;font-size:16px;color:#ccc;}
@@ -102,259 +75,72 @@
 
 <div class="grid" id="grid" style="display:none;"></div>
 <button class="btn" id="btn-get" style="display:none;">Получить сигнал</button>
-<div id="trap-selection" class="trap-selector">
-  <button id="trap-left" class="arrow-btn">←</button>
-  <div class="trap-display">
-    <div id="trap-value">3</div>
-    <div class="trap-label">ловушки</div>
-  </div>
-  <button id="trap-right" class="arrow-btn">→</button>
-</div>
+
+<div id="trap-selection" style="display:none; margin-top:12px; text-align:center; user-select:none;"></div>
+
 <div id="info" style="display:none;">Сигнал можно получить только раз в 30 секунд.</div>
 <div id="coming-soon">Скоро запуск софта</div>
 
 <script>
   tsParticles.load("tsparticles", {
-  fpsLimit: 60,
-  particles: {
-    number:{value:60,density:{enable:true,area:800}},
-    color:{value:"#2db7f5"},
-    shape:{type:"circle"},
-    opacity:{value:0.5,anim:{enable:true,speed:0.8,opacity_min:0.1,sync:false}},
-    size:{value:{min:1,max:4}},
-    move:{enable:true,speed:0.5,random:true,outMode:"out"}
-  },
-  interactivity:{detect_on:"canvas",events:{resize:true}},
-  retina_detect:true
-});
-
-const allowed = [111111,222222];
-const form = document.getElementById("login-form"),
-      err = document.getElementById("error-msg"),
-      selection = document.getElementById("game-selection"),
-      minesBtn = document.getElementById("btn-mines"),
-      luckyBtn = document.getElementById("btn-lucky"),
-      grid = document.getElementById("grid"),
-      getBtn = document.getElementById("btn-get"),
-      info = document.getElementById("info"),
-      soon = document.getElementById("coming-soon"),
-      back = document.getElementById("back-btn"),
-      trapSelection = document.getElementById("trap-selection"),
-      trapValue = document.getElementById("trap-value"),
-      trapLeft = document.getElementById("trap-left"),
-      trapRight = document.getElementById("trap-right");
-
-const total = 25;
-let timer;
-let remainingTime = 0;
-
-const trapOptions = [1, 3, 5, 7];
-let selectedTraps = 3;
-
-function updateTrapDisplay() {
-  trapValue.textContent = selectedTraps;
-  trapValue.style.transform = "scale(1.2)";
-  setTimeout(() => {
-    trapValue.style.transform = "scale(1)";
-  }, 150);
-}
-
-trapLeft.addEventListener("click", () => {
-  const idx = trapOptions.indexOf(selectedTraps);
-  if (idx > 0) {
-    selectedTraps = trapOptions[idx - 1];
-    updateTrapDisplay();
-  }
-});
-
-trapRight.addEventListener("click", () => {
-  const idx = trapOptions.indexOf(selectedTraps);
-  if (idx < trapOptions.length - 1) {
-    selectedTraps = trapOptions[idx + 1];
-    updateTrapDisplay();
-  }
-});
-
-updateTrapDisplay();
-
-form.addEventListener("submit", e => {
-  e.preventDefault();
-  const id = +document.getElementById("accountId").value;
-  if(allowed.includes(id)){
-    form.style.display = "none";
-    selection.style.display = "flex";
-    err.textContent = "";
-  } else {
-    err.textContent = "Неверный ID";
-  }
-});
-
-minesBtn.onclick = () => {
-  selection.style.display = "none";
-  back.style.display = "block";
-  grid.style.display = "grid";
-  getBtn.style.display = "block";
-  info.style.display = "block";
-  soon.style.display = "none";
-  trapSelection.style.display = "flex"; // показываем селектор ловушек
-
-  createGrid();
-
-  if (remainingTime > 0) {
-    getBtn.disabled = true;
-    info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
-    timer = setInterval(() => {
-      remainingTime--;
-      if (remainingTime > 0) {
-        info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
-      } else {
-        clearInterval(timer);
-        getBtn.disabled = false;
-        info.textContent = "Можно снова.";
-      }
-    }, 1000);
-  } else {
-    getBtn.disabled = false;
-    info.textContent = "Можно снова.";
-  }
-};
-
-luckyBtn.onclick = () => {
-  selection.style.display = "none";
-  back.style.display = "block";
-  grid.style.display = "none";
-  getBtn.style.display = "none";
-  info.style.display = "none";
-  soon.style.display = "block";
-  trapSelection.style.display = "none";  // скрываем селектор ловушек
-};
-
-back.onclick = () => {
-  clearInterval(timer);
-  grid.style.display = "none";
-  getBtn.style.display = "none";
-  info.style.display = "none";
-  soon.style.display = "none";
-  back.style.display = "none";
-  selection.style.display = "flex";
-  trapSelection.style.display = "none";
-};
-
-const newSquareSVG = `...`; // оставь свой svg код квадрата тут
-const starSVG = `...`; // оставь свой svg код звезды тут
-
-function createGrid(){
-  grid.innerHTML = "";
-  for(let i=0; i<total; i++){
-    const div = document.createElement("div");
-    div.className = "cell";
-    div.dataset.i = i;
-    div.innerHTML = newSquareSVG;
-    grid.appendChild(div);
-  }
-}
-
-getBtn.onclick = () => {
-  if(getBtn.disabled) return;
-
-  getBtn.disabled = true;
-  remainingTime = 30;
-  info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
-
-  // Сброс звёзд
-  document.querySelectorAll(".cell.star").forEach(cell => {
-    cell.classList.remove("star");
-    cell.innerHTML = newSquareSVG;
+    fpsLimit: 60,
+    particles: {
+      number:{value:60,density:{enable:true,area:800}},
+      color:{value:"#2db7f5"},
+      shape:{type:"circle"},
+      opacity:{value:0.5,anim:{enable:true,speed:0.8,opacity_min:0.1,sync:false}},
+      size:{value:{min:1,max:4}},
+      move:{enable:true,speed:0.5,random:true,outMode:"out"}
+    },
+    interactivity:{detect_on:"canvas",events:{resize:true}},
+    retina_detect:true
   });
 
-  timer = setInterval(() => {
-    remainingTime--;
-    if (remainingTime > 0) {
-      info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
-    } else {
-      clearInterval(timer);
-      getBtn.disabled = false;
-      info.textContent = "Можно снова.";
-    }
-  }, 1000);
-
-  const count = Math.floor(Math.random() * 5) + 3;
-  const selected = new Set();
-  while(selected.size < count) selected.add(Math.floor(Math.random() * total));
-
-  Array.from(selected).forEach((i, o) => setTimeout(() => {
-    const cell = document.querySelectorAll(".cell")[i];
-    cell.classList.add("star");
-    cell.innerHTML = starSVG;
-  }, o * 150));
-};
-
-updateTrapDisplay();
-});
-
-
-
-  form.addEventListener("submit", e => {
-    e.preventDefault();
-    const id = +document.getElementById("accountId").value;
-    if(allowed.includes(id)){
-      form.style.display="none"; 
-      selection.style.display="flex";
-      err.textContent = "";
-    } else {
-      err.textContent="Неверный ID";
-    }
-  });
-
- minesBtn.onclick = () => {
-  selection.style.display = "none"; 
-  back.style.display = "block";
-  grid.style.display = "grid"; 
-  getBtn.style.display = "block"; 
-  info.style.display = "block"; 
-  soon.style.display = "none";
-  trapSelection.style.display = "block";
-  createGrid();
-
-  if (remainingTime > 0) {
-    getBtn.disabled = true;
-    info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
-    timer = setInterval(() => {
-      remainingTime--;
-      if (remainingTime > 0) {
-        info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
-      } else {
-        clearInterval(timer);
-        getBtn.disabled = false;
-        info.textContent = "Можно снова.";
-      }
-    }, 1000);
-  } else {
-    getBtn.disabled = false;
-    info.textContent = "Можно снова.";
-  }
-};
-
- luckyBtn.onclick = () => {
-  selection.style.display = "none"; 
-  back.style.display = "block";
-  grid.style.display = "none"; 
-  getBtn.style.display = "none"; 
-  info.style.display = "none"; 
-  soon.style.display = "block";
-  trapSelection.style.display = "none";    // <--- добавить
-};
-
-  back.onclick = ()=>{
-    clearInterval(timer); 
-    grid.style.display="none"; 
-    getBtn.style.display="none"; 
-    info.style.display="none"; 
-    soon.style.display="none"; 
-    back.style.display="none"; 
-    selection.style.display="flex";
-    trapSelection.style.display = "none";
-  };
+  const allowed = [111111,222222];
+  const form = document.getElementById("login-form"), err = document.getElementById("error-msg");
+  const selection = document.getElementById("game-selection"), minesBtn = document.getElementById("btn-mines"), luckyBtn = document.getElementById("btn-lucky");
+  const grid = document.getElementById("grid"), getBtn = document.getElementById("btn-get"), info = document.getElementById("info"), soon = document.getElementById("coming-soon"), back = document.getElementById("back-btn");
+  const trapSelection = document.getElementById("trap-selection");
+  const total = 25;
+  const newSquareSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" fill="none" viewBox="0 0 54 54" style="width:60px; height:60px;">
+<defs>
+  <radialGradient id="Gradient-2_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(28.6228 -7.61449 6.96925 26.1973 5.358 50.625)">
+    <stop offset="0" stop-color="#1c2130"></stop>
+    <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+  </radialGradient>
+  <radialGradient id="Gradient-3_c_2_r4" cx="0" cy="0" r="1" fx="0" fy="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-26.8297 -12.5463 11.4831 -24.5562 19.703 45.611)">
+    <stop offset="0" stop-color="#1c2130"></stop>
+    <stop offset="1" stop-color="#1c2130" stop-opacity="0"></stop>
+  </radialGradient>
+  <linearGradient id="Gradient-0_c_2_r4" x1="58.152" y1="24.257" x2="-3.614" y2="28.984" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#d8fffc" stop-opacity="0.63"></stop>
+    <stop offset="0.219" stop-color="#a0fff7" stop-opacity="0"></stop>
+    <stop offset="0.491" stop-color="#8dfff6" stop-opacity="0.56"></stop>
+    <stop offset="0.733" stop-color="#9af8f0"></stop>
+    <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+    <stop offset="1" stop-color="#bafff9" stop-opacity="0"></stop>
+  </linearGradient>
+  <linearGradient id="Gradient-1_c_2_r4" x1="24" y1="0" x2="24" y2="48" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#37b0ce"></stop>
+    <stop offset="1" stop-color="#01586b"></stop>
+  </linearGradient>
+  <clipPath id="clip0_366_7284_c_2_r">
+    <rect width="56" height="56" rx="7.593" fill="#fff"></rect>
+  </clipPath>
+</defs>
+<style>
+  @keyframes a0_t_c_2_r{0%{transform:translate(28px,28px) scale(0,0) translate(-28px,-28px);animation-timing-function:cubic-bezier(0,0,.58,1)}to{transform:translate(28px,28px) scale(1,1) translate(-28px,-28px)}}
+  @keyframes a1_o_c_2_r{0%{opacity:.6}to{opacity:0}}
+</style>
+<g clip-path="url(#clip0_366_7284_c_2_r)" transform="matrix(0 0 0 0 28 28)" style="animation: 0.25s linear 0s 1 normal both running a0_t_c_2_r;">
+  <rect opacity="0.7" width="56" height="56" rx="12" fill="#151C2E"></rect>
+  <rect opacity="0.6" width="52" height="52" rx="10" fill="url(#Gradient-0_c_2_r4)" transform="translate(2 2)"></rect>
+  <rect width="48" height="48" rx="8" fill="url(#Gradient-1_c_2_r4)" transform="translate(4 4)"></rect>
+  <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M14.834 60.127c3.731 1.672 7.732.204 11.798-.231 4.245-.454 9.628 1.157 12.1-2.325 2.466-3.477-1.482-7.917-1.818-12.166-.375-4.74 2.845-10.093-.23-13.719-3.261-3.844-9.295-4.521-14.177-3.264-4.482 1.155-6.48 5.88-9.52 9.37-3.412 3.912-9.48 6.762-9.052 11.935.43 5.202 6.134 8.266 10.899 10.4Z" fill="url(#Gradient-2_c_2_r4)"></path>
+  <path opacity="0.1" fill-rule="evenodd" clip-rule="evenodd" d="M8.7 53.292c-3.968.987-7.647-1.164-11.573-2.31-4.098-1.196-9.681-.56-11.498-4.423-1.815-3.857 2.854-7.531 3.935-11.655 1.205-4.599-1.02-10.436 2.648-13.462 3.888-3.208 9.947-2.81 14.53-.711 4.208 1.928 5.34 6.931 7.718 10.902 2.667 4.453 8.137 8.33 6.803 13.346-1.342 5.045-7.497 7.053-12.563 8.313Z" fill="url(#Gradient-3_c_2_r4)"></path>
+  <rect opacity="0.6" width="56" height="56" rx="12" fill="#151C2E" style="animation: 0.25s linear 0s 1 normal both running a1_o_c_2_r;"></rect>
+</g>
+</svg>`; 
 
   const starSVG = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 56 56" style="width:60px; height:60px;">
 <defs>
@@ -401,102 +187,183 @@ updateTrapDisplay();
   </mask>
 </defs>
 <style>
-  @keyframes star_t_s_i {
-    0% {transform:translate(28.3918px,26.0576px) scale(0,0) translate(-23.4974px,-22.4547px);animation-timing-function:cubic-bezier(0,0,.58,1);}
-    42.8571% {transform:translate(28.3918px,26.0576px) scale(1,1) translate(-23.4974px,-22.4547px);animation-timing-function:cubic-bezier(0,0,.58,1);}
-    71.4285% {transform:translate(28.3918px,26.0576px) scale(1.15,1.15) translate(-23.4974px,-22.4547px);animation-timing-function:cubic-bezier(0,0,.58,1);}
-    to {transform:translate(28.3918px,26.0576px) scale(1,1) translate(-23.4974px,-22.4547px);}
-  }
-  @keyframes a1_t_s_i {
-    0%,to {transform:translate(23.4966px,22.4549px);}
-  }
-  @keyframes a0_t_s_i {
-    0% {transform:scale(1.889498,1.889498) translate(-28.3911px,-27.0603px);animation-timing-function:cubic-bezier(0,0,.58,1);}
-    to {transform:scale(1,1) translate(-28.3911px,-27.0603px);}
-  }
-  @keyframes a2_t_s_i {
-    0% {transform:translate(22.2182px,22.7642px) rotate(145.526246deg) scale(.462454,.462454) translate(-27.1127px,-26.3671px);animation-timing-function:cubic-bezier(0,0,.58,1);}
-    to {transform:translate(22.2182px,22.7642px) rotate(0deg) scale(1,1) translate(-27.1127px,-26.3671px);}
-  }
-  @keyframes a2_o_s_i {
-    0% {opacity:0;animation-timing-function:cubic-bezier(0,0,.58,1);}
-    to {opacity:1;}
-  }
-  @keyframes a3_t_s_i {
-    0% {transform:translate(18.9293px,24.3971px) rotate(-53.127557deg) scale(.322292,.322292) translate(-26.7458px,-20.6401px);animation-timing-function:cubic-bezier(0,0,.58,1);}
-    to {transform:translate(21.8514px,17.0372px) rotate(0deg) scale(1,1) translate(-26.7458px,-20.6401px);}
-  }
-  @keyframes a3_o_s_i {
-    0% {opacity:0;animation-timing-function:cubic-bezier(0,0,.58,1);}
-    to {opacity:1;}
-  }
-  @keyframes a4_t_s_i {
-    0% {transform:translate(-.804393px,13.4424px) rotate(30deg) translate(-8.47967px,-28px);}
-    28.5714% {transform:translate(-.804393px,13.4424px) rotate(30deg) translate(-8.47967px,-28px);animation-timing-function:cubic-bezier(.42,0,.58,1);}
-    85.7142%,to {transform:translate(58.8824px,41.1538px) rotate(30deg) translate(-8.47967px,-28px);}
-  }
+  @keyframes star_t_s_i{0%{transform:translate(28px,28px) scale(0,0) translate(-28px,-28px);animation-timing-function:cubic-bezier(0,0,.58,1)}to{transform:translate(28px,28px) scale(1,1) translate(-28px,-28px)}}
+  @keyframes a4_t_s_i{0%{transform:translate(0,0) translate(-7.457px,-7.457px)}to{transform:translate(62.002px,14.312px) translate(-7.457px,-7.457px)}}
 </style>
-<g id="star" transform="matrix(0 0 0 0 28.392 26.058)" style="animation: 0.7s linear 0s 1 normal both running star_t_s_i;">
-  <path d="M26.439 4.8c.813-1.595 3.092-1.595 3.905 0l5.7 11.17a2.192 2.192 0 0 0 1.609 1.168l12.385 1.97c1.768.28 2.472 2.448 1.207 3.714l-8.862 8.873a2.193 2.193 0 0 0-.615 1.891l1.955 12.388c.279 1.768-1.565 3.107-3.16 2.295l-11.177-5.686a2.192 2.192 0 0 0-1.989 0L16.22 48.269c-1.595.812-3.439-.527-3.16-2.295l1.955-12.388a2.192 2.192 0 0 0-.615-1.89l-8.862-8.874c-1.265-1.266-.561-3.433 1.207-3.714l12.385-1.97a2.192 2.192 0 0 0 1.609-1.168l5.7-11.17Z" fill="#C22A20" transform="translate(-4.894 -3.603)"></path>
-  <path d="M26.439 4.8c.813-1.595 3.092-1.595 3.905 0l5.7 11.17a2.192 2.192 0 0 0 1.609 1.168l12.385 1.97c1.768.28 2.472 2.448 1.207 3.714l-8.862 8.873a2.193 2.193 0 0 0-.615 1.891l1.955 12.388c.279 1.768-1.565 3.107-3.16 2.295l-11.177-5.686a2.192 2.192 0 0 0-1.989 0L16.22 48.269c-1.595.812-3.439-.527-3.16-2.295l1.955-12.388a2.192 2.192 0 0 0-.615-1.89l-8.862-8.874c-1.265-1.266-.561-3.433 1.207-3.714l12.385-1.97a2.192 2.192 0 0 0 1.609-1.168l5.7-11.17Z" fill="url(#Gradient-0_s_i)" transform="translate(-4.894 -3.603)"></path>
-  <path d="M26.44 4.799c.813-1.595 3.091-1.595 3.905 0l5.7 11.17a2.192 2.192 0 0 0 1.609 1.169l12.384 1.97c1.768.28 2.473 2.448 1.208 3.714l-8.863 8.873a2.193 2.193 0 0 0-.614 1.891l1.956 12.388c.278 1.768-1.566 3.107-3.16 2.295l-11.177-5.686a2.192 2.192 0 0 0-1.99 0L16.22 48.269c-1.595.813-3.438-.526-3.159-2.294l1.956-12.388a2.192 2.192 0 0 0-.615-1.891l-8.862-8.873c-1.265-1.266-.56-3.433 1.208-3.714l12.384-1.97a2.192 2.192 0 0 0 1.609-1.169l5.7-11.17Z" fill="url(#Gradient-1_s_i)" transform="translate(-4.894 -3.603)"></path>
-  <path d="M15.904 29.6a3.97 3.97 0 1 1-7.94 0 3.97 3.97 0 0 1 7.94 0Z" fill="url(#Gradient-2_s_i)" opacity=".3" style="animation: 1.6s ease 0s infinite alternate normal none running a2_o_s_i;"></path>
-  <path d="M14.832 24.025 22.217 22.765l2.674-1.34-8.814-2.122a7.71 7.71 0 0 1-1.244 4.723Z" fill="#ffc50d" style="animation: 1.6s ease 0s infinite alternate normal none running a3_o_s_i;"></path>
-  <path d="M22.217 22.765 19.543 26.38l3.362 1.683 3.143-6.013-4.831 1.06Z" fill="#f9ba03" style="animation: 1.6s ease 0s infinite alternate normal none running a3_o_s_i;"></path>
-  <path d="M14.249 32.568a9.822 9.822 0 0 1-3.014-2.612l-1.76-1.988 2.505-3.114 2.037 1.062 1.56 5.212-1.329 1.44Z" fill="url(#Gradient-3_s_i)"></path>
-  <path d="M19.636 29.725 14.52 34.09l-3.586-3.342 7.666-2.143 1.036 1.12Z" fill="url(#Gradient-4_s_i)"></path>
-  <path d="M21.888 29.11c.309-.617.375-1.236.157-1.858l-1.467-4.565-4.041 1.203 4.77 5.115Z" fill="url(#Gradient-5_s_i)"></path>
-  <path d="m14.802 21.873 1.353 1.364-3.26 2.536a7.55 7.55 0 0 1-1.597-3.254l2.676-.646Z" fill="url(#Gradient-6_s_i)"></path>
+<g style="animation: 0.25s linear 0s 1 normal both running star_t_s_i;" mask="url(#Mask-1_s_i)" transform="translate(28 28) scale(0 0) translate(-28 -28)">
+  <path fill="url(#Gradient-0_s_i)" d="M51.535 9.394c-5.495 1.568-6.596-5.9-7.927-8.29-1.057-1.908-1.94-3.996-3.925-4.483-1.82-.452-3.753.847-5.439.861-3.85.028-7.11 4.152-10.619 4.946-2.824.627-5.927-.57-8.44 1.117-2.442 1.641-3.185 5.024-4.46 7.45-2.435 4.718-7.348 6.734-9.865 11.471-2.016 3.678-2.812 8.583-1.283 12.611 1.224 3.336 4.558 6.269 7.849 7.93 3.536 1.758 7.306 3.126 11.073 2.893 4.088-.248 7.645-2.07 10.838-4.624 4.206-3.469 8.576-6.518 11.437-11.31 2.84-4.749 3.474-11.084.935-16.21z"/>
+  <path fill="url(#Gradient-1_s_i)" d="M35.01 24.408c2.77-1.875 3.263-7.07.433-9.179-2.83-2.11-7.91-3.27-11.323-2.684-3.354.577-7.904 5.757-9.78 8.802-2.313 3.742-5.733 10.074-4.728 15.23.902 4.657 5.527 7.697 9.901 9.095 3.373 1.08 8.418 1.707 12.249-1.236 4.239-3.31 8.595-10.14 9.303-14.458.67-3.975-.143-6.153-2.772-7.57z"/>
+  <path fill="url(#Gradient-2_s_i)" d="M19.515 27.53c.996-1.14 4.137-3.35 6.192-3.11 2.306.271 4.632 2.76 4.166 5.151-.251 1.335-1.585 3.553-2.933 4.333-1.126.632-4.395.645-5.955-.745-1.487-1.31-2.507-3.541-1.47-5.629z"/>
+  <path fill="url(#Gradient-3_s_i)" d="M29.908 19.593c.348-2.32-4.124-4.05-5.688-1.737-1.617 2.388-2.357 4.92-2.666 6.258-.545 2.361-.474 4.59 1.107 5.497 1.656.947 3.334-2.17 4.144-3.824 1.156-2.346 2.954-5.652 3.103-6.194z"/>
+  <path fill="url(#Gradient-4_s_i)" d="M23.27 21.692c.308-.974 2.82-3.011 4.057-1.568 1.175 1.37 1.205 3.39.916 4.428-.374 1.54-2.77 2.564-3.96 1.451-1.012-.911-1.54-2.939-1.013-4.31z"/>
+  <path fill="url(#Gradient-5_s_i)" d="M28.418 28.927c.19-.296.527-1.413.373-2.075-.152-.622-.84-1.676-1.215-1.677-.37 0-1.196 1.7-1.084 2.52.108.735.898 1.736 1.495 1.232z"/>
+  <path fill="url(#Gradient-6_s_i)" d="M25.755 26.014c.177-.202.457-.721.384-1.071-.08-.43-.487-1.062-.688-1.08-.199-.016-.722.637-.688 1.002.034.335.493 1.205.992 1.149z"/>
+  <circle cx="27.404" cy="26.604" r="1.1" fill="#fff"></circle>
 </g>
 </svg>`;
 
- function createGrid(){
-  grid.innerHTML = "";
-
-  for(let i=0; i<total; i++){
-    const div = document.createElement("div"); 
-    div.className = "cell";
-    div.dataset.i = i;
-    div.innerHTML = newSquareSVG;
-    grid.appendChild(div);
+  // Функция создания сетки 5x5
+  function createGrid() {
+    grid.innerHTML = "";
+    for(let i = 0; i < total; i++){
+      const div = document.createElement("div");
+      div.className = "cell";
+      div.innerHTML = newSquareSVG;
+      grid.appendChild(div);
+    }
   }
-}
 
-getBtn.onclick = () => {
-  if(getBtn.disabled) return;
+  function createTrapSelector() {
+    trapSelection.innerHTML = `
+      <button id="trap-left" class="trap-arrow btn" aria-label="Уменьшить ловушки" style="font-size: 26px; user-select:none;">←</button>
 
-  getBtn.disabled = true;
-  remainingTime = 30;
-  info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
+      <div id="trap-value" style="display:flex; flex-direction: column; align-items: center; font-weight: bold; font-size: 24px; min-width: 60px; color: #00c6ff; user-select:none;">
+        <span id="trap-number">1</span>
+        <span style="font-size: 14px; color: #aaa; margin-top: 2px;">ловушке</span>
+      </div>
 
-  // Сброс звёзд
-  document.querySelectorAll(".cell.star").forEach(cell => {
-    cell.classList.remove("star");
-    cell.innerHTML = newSquareSVG;
-  });
+      <button id="trap-right" class="trap-arrow btn" aria-label="Увеличить ловушки" style="font-size: 26px; user-select:none;">→</button>
+    `;
 
-  timer = setInterval(() => {
-    remainingTime--;
-    if (remainingTime > 0) {
-      info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
+    const trapLeftBtn = document.getElementById("trap-left");
+    const trapRightBtn = document.getElementById("trap-right");
+    const trapNumberSpan = document.getElementById("trap-number");
+
+    const trapValues = [1, 3, 5, 7];
+    let selectedTrapsIndex = 0;
+
+    function updateTrapDisplay() {
+      const val = trapValues[selectedTrapsIndex];
+      trapNumberSpan.textContent = val;
+      trapNumberSpan.nextElementSibling.textContent = val === 1 ? "ловушке" : "ловушках";
+
+      trapLeftBtn.disabled = selectedTrapsIndex === 0;
+      trapRightBtn.disabled = selectedTrapsIndex === trapValues.length - 1;
+    }
+
+    trapLeftBtn.addEventListener("click", () => {
+      if (selectedTrapsIndex > 0) {
+        selectedTrapsIndex--;
+        updateTrapDisplay();
+      }
+    });
+
+    trapRightBtn.addEventListener("click", () => {
+      if (selectedTrapsIndex < trapValues.length - 1) {
+        selectedTrapsIndex++;
+        updateTrapDisplay();
+      }
+    });
+
+    updateTrapDisplay();
+
+    // Для доступа к выбранному значению извне
+    window.getSelectedTraps = () => trapValues[selectedTrapsIndex];
+  }
+
+  let timer, remainingTime = 0;
+
+  form.onsubmit = e => {
+    e.preventDefault();
+    const val = +document.getElementById("accountId").value;
+    if(allowed.includes(val)){
+      err.textContent = "";
+      form.style.display = "none";
+      selection.style.display = "flex";
     } else {
-      clearInterval(timer);
+      err.textContent = "Неверный ID";
+      err.style.color = "red";
+    }
+  };
+
+  minesBtn.onclick = () => {
+    selection.style.display = "none";
+    back.style.display = "block";
+    grid.style.display = "grid";
+    getBtn.style.display = "block";
+    info.style.display = "block";
+    soon.style.display = "none";
+
+    trapSelection.style.display = "flex";
+    createTrapSelector();
+
+    if(remainingTime > 0){
+      getBtn.disabled = true;
+      info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
+      timer = setInterval(() => {
+        remainingTime--;
+        if(remainingTime > 0){
+          info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
+        } else {
+          clearInterval(timer);
+          getBtn.disabled = false;
+          info.textContent = "Можно снова.";
+        }
+      }, 1000);
+    } else {
       getBtn.disabled = false;
       info.textContent = "Можно снова.";
     }
-  }, 1000);
 
-  const count = Math.floor(Math.random() * 5) + 3;
-  const selected = new Set();
-  while(selected.size < count) selected.add(Math.floor(Math.random() * total));
+    createGrid();
+  };
 
-  Array.from(selected).forEach((i, o) => setTimeout(() => {
-    const cell = document.querySelectorAll(".cell")[i];
-    cell.classList.add("star");
-    cell.innerHTML = starSVG;
-  }, o * 150));
-};
+  back.onclick = () => {
+    clearInterval(timer);
+    grid.style.display = "none";
+    getBtn.style.display = "none";
+    info.style.display = "none";
+    soon.style.display = "none";
+    back.style.display = "none";
+    selection.style.display = "flex";
+
+    trapSelection.style.display = "none";
+    trapSelection.innerHTML = "";
+  };
+
+  getBtn.onclick = () => {
+    if(getBtn.disabled) return;
+
+    getBtn.disabled = true;
+    remainingTime = 30;
+    info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
+
+    // Сброс звёзд
+    document.querySelectorAll(".cell.star").forEach(cell => {
+      cell.classList.remove("star");
+      cell.innerHTML = newSquareSVG;
+    });
+
+    timer = setInterval(() => {
+      remainingTime--;
+      if (remainingTime > 0) {
+        info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
+      } else {
+        clearInterval(timer);
+        getBtn.disabled = false;
+        info.textContent = "Можно снова.";
+      }
+    }, 1000);
+
+    const selectedTraps = window.getSelectedTraps ? window.getSelectedTraps() : 1;
+    console.log("Выбрано ловушек:", selectedTraps);
+
+    // Покажем выбранные ловушки (напр., выделим звездами)
+    const count = selectedTraps;
+    const selected = new Set();
+    while(selected.size < count) selected.add(Math.floor(Math.random() * total));
+
+    Array.from(selected).forEach((i, o) => setTimeout(() => {
+      const cell = document.querySelectorAll(".cell")[i];
+      cell.classList.add("star");
+      cell.innerHTML = starSVG;
+    }, o * 150));
+  };
+
+  // Начальное состояние
+  selection.style.display = "none";
+  trapSelection.style.display = "none";
+
 </script>
-
 </body>
 </html>
