@@ -127,6 +127,7 @@ const newSquareSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="56" height=
 </svg>`; 
   let timer;
 const trapSelection = document.getElementById("trap-selection");
+let remainingTime = 0;
 const trapButtons = document.querySelectorAll(".trap-btn");
 let selectedTraps = 1; // по умолчанию
 
@@ -159,15 +160,33 @@ trapButtons.forEach(btn => {
     }
   });
 
-  minesBtn.onclick = () => {
+ minesBtn.onclick = () => {
   selection.style.display = "none"; 
   back.style.display = "block";
   grid.style.display = "grid"; 
   getBtn.style.display = "block"; 
   info.style.display = "block"; 
   soon.style.display = "none";
-  trapSelection.style.display = "block";    // <--- добавить
+  trapSelection.style.display = "block";
   createGrid();
+
+  if (remainingTime > 0) {
+    getBtn.disabled = true;
+    info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
+    timer = setInterval(() => {
+      remainingTime--;
+      if (remainingTime > 0) {
+        info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
+      } else {
+        clearInterval(timer);
+        getBtn.disabled = false;
+        info.textContent = "Можно снова.";
+      }
+    }, 1000);
+  } else {
+    getBtn.disabled = false;
+    info.textContent = "Можно снова.";
+  }
 };
 
  luckyBtn.onclick = () => {
@@ -182,7 +201,6 @@ trapButtons.forEach(btn => {
 
   back.onclick = ()=>{
     clearInterval(timer); 
-    getBtn.disabled=false;
     grid.style.display="none"; 
     getBtn.style.display="none"; 
     info.style.display="none"; 
@@ -299,30 +317,29 @@ trapButtons.forEach(btn => {
 }
 
 getBtn.onclick = () => {
-  if(getBtn.disabled) return; // защита от повторного нажатия (на всякий случай)
+  if(getBtn.disabled) return;
 
-  getBtn.disabled = true;    // блокируем кнопку сразу
-  let t = 30; 
-  info.textContent = `Следующий сигнал через ${t} сек.`;
+  getBtn.disabled = true;
+  remainingTime = 30;
+  info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
 
-  // Сброс звёзд (если были)
+  // Сброс звёзд
   document.querySelectorAll(".cell.star").forEach(cell => {
     cell.classList.remove("star");
-    cell.innerHTML = newSquareSVG;  // заменяем на квадрат
+    cell.innerHTML = newSquareSVG;
   });
 
   timer = setInterval(() => {
-    t--;
-    if(t > 0) {
-      info.textContent = `Следующий сигнал через ${t} сек.`;
+    remainingTime--;
+    if (remainingTime > 0) {
+      info.textContent = `Следующий сигнал через ${remainingTime} сек.`;
     } else {
       clearInterval(timer);
-      getBtn.disabled = false;       // разблокируем кнопку по окончании таймера
+      getBtn.disabled = false;
       info.textContent = "Можно снова.";
     }
   }, 1000);
 
-  // Показываем новые звезды с задержкой
   const count = Math.floor(Math.random() * 5) + 3;
   const selected = new Set();
   while(selected.size < count) selected.add(Math.floor(Math.random() * total));
